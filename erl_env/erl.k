@@ -133,6 +133,16 @@ module ERL
 
   syntax Atom ::= "badarg" [token]
 
+  rule V1:Value and V2:Value => badarg
+    requires (V1 =/=K true andBool V1 =/=K false)
+      orBool (V2 =/=K true andBool V2 =/=K false)
+  rule V1:Value and V2:Value  => V1 andalso V2
+
+  rule V1:Value or V2:Value => badarg
+    requires (V1 =/=K true andBool V1 =/=K false)
+      orBool (V2 =/=K true andBool V2 =/=K false)
+  rule V1:Value or V2:Value  => V1 orelse V2
+
   rule true  andalso B   => B
   rule false andalso _   => false
   rule V:Value andalso _ => badarg requires V =/=K true andBool V =/=K false
