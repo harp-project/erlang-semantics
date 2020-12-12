@@ -85,15 +85,15 @@ module ERL-SYNTAX
 
   syntax GuardSeq ::= List{Exps, ";"}  // TODO: allow only valid guards instead of arbitrary expressions
 
-  syntax Match0 ::= Exp "->" Exp  [klabel("_->_::Match0")]
-                  | Exp "when" GuardSeq "->" Exp
+  syntax Match0 ::= Exp "->" Exps  [klabel("_->_::Match0")]
+                  | Exp "when" GuardSeq "->" Exps
   syntax Match  ::= List{Match0, ";"}
 
   syntax IfCl   ::= GuardSeq "->" Exp            [ifcl]
   syntax IfBody ::= List{IfCl, ";"}
 
-  syntax Clause0     ::= "("Exps")" "->" Exp  [clause]  //TODO: allow optional when
-  syntax NamedClause ::=  Variable "("Exps")" "->" Exp  [nclause]
+  syntax Clause0     ::= "("Exps")" "->" Exps  [clause]  //TODO: allow optional when
+  syntax NamedClause ::=  Variable "("Exps")" "->" Exps  [nclause]
   syntax Clause      ::= Clause0 | NamedClause
   syntax Clauses     ::= List{Clause, ";"}
 
@@ -124,8 +124,8 @@ module ERL-SYNTAX
 // Function Definitions
 
   // TODO: optional when; check whether the different clauses have the same ariry
-  syntax FunCl0  ::= Atom"("Exps")" "->" Exp ";" [funcl0]
-  syntax FunCl1  ::= Atom"("Exps")" "->" Exp "." [funcl1]
+  syntax FunCl0  ::= Atom"("Exps")" "->" Exps ";" [funcl0]
+  syntax FunCl1  ::= Atom"("Exps")" "->" Exps "." [funcl1]
   syntax FunCl   ::= FunCl0 | FunCl1
 
   syntax FunDefs ::= FunCl | FunDefs FunDefs [right]

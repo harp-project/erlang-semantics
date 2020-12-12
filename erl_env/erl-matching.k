@@ -43,16 +43,16 @@ module ERL-MATCHING
        </k>
 
   // Without guards
-  rule <k> matches(Exp, P -> E) => badmatch ...</k>
+  rule <k> matches(Exp, P -> Es) => badmatch ...</k>
        <env> Env </env>
       requires notBool (isMatching(Exp, P, Env))
-  rule <k> matches(Exp, P -> E) => E ...</k>
+  rule <k> matches(Exp, P -> Es) => begin Es end ...</k>
        <env> Env => updateMap(Env, getMatching(Exp, P, Env)) </env>
       requires isMatching(Exp, P, Env)    
-  rule <k> matches(Exp, (P -> E ; Ms)) => E ...</k>
+  rule <k> matches(Exp, (P -> Es ; Ms)) => begin Es end ...</k>
        <env> Env => updateMap(Env,getMatching(Exp, P, Env)) </env>
       requires isMatching(Exp, P, Env)
-  rule <k> matches(Exp, (P -> E ; Ms)) => matches(Exp, Ms) ...</k>
+  rule <k> matches(Exp, (P -> Es ; Ms)) => matches(Exp, Ms) ...</k>
        <env> Env </env>
       requires (notBool (isMatching(Exp, P, Env))) andBool (Ms =/=K .Match)
 
