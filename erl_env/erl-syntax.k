@@ -15,15 +15,16 @@ module ERL-SYNTAX
   syntax UnquotedAtom ::= Token{[a-z][\_a-zA-Z0-9\@]*}
          [notInRules, autoReject, token, regex([a-z][\_a-zA-Z0-9\@]*)]
 
-  // TODO
-  // syntax QuotedAtom ::=
+  syntax QuotedAtom ::= Token{[\'][\_a-zA-Z0-9\@]*[\']}
+         [notInRules, autoReject, token, regex([\'][\_a-zA-Z0-9\@]*[\'])]
 
-  syntax Atom ::= UnquotedAtom | Bool //| QuotedAtom
+  syntax Atom ::= UnquotedAtom | QuotedAtom | Bool
 
   syntax BIF ::= "is_atom" | "is_boolean" | "is_integer" | "is_number" |
               // "is_function" | "is_list" | "is_tuple" | TODO
                  "hd" | "tl" | "length" |
-                 "element" | "setelement" | "tuple_size"  [token]
+                 "element" | "setelement" | "tuple_size" |
+                 "list_to_tuple" | "tuple_to_list" [token]
   syntax Atom ::= BIF
 
   syntax Joker ::= "_" [notInRules, token, joker]

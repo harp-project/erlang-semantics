@@ -39,4 +39,15 @@ module ERL-BIFS
 
   rule tuple_size({Exps}) => count(Exps)
 
+  syntax Exps ::= "#ErlListToKList" "(" Exp ")" [function]
+  rule #ErlListToKList( [ .Exps ] ) => .Exps
+  rule #ErlListToKList( [ H | T ] ) => H, #ErlListToKList( T )
+  rule list_to_tuple((L,.Exps)) => { #ErlListToKList(L) }
+
+  syntax Exp ::= "#KListToErlList" "(" Exps ")" [function]
+  rule #KListToErlList( .Exps ) => [.Exps]
+  rule #KListToErlList( E:Exp ) => [E]
+  rule #KListToErlList( E:Exp, Es:Exps ) => [ E | #KListToErlList( Es ) ]
+  rule tuple_to_list(({ Es },.Exps)) => #KListToErlList (Es)
+
 endmodule
