@@ -311,7 +311,7 @@ module ERL
 
   //So far, we are only able to write expression sequence in a begin-end block
 
-  rule E, .Exps => E // TODO / BEWARE / CAUTION / this may be too permissive
+  // rule E, .Exps => E // TODO / BEWARE / CAUTION / this may be too permissive
 
   rule begin E, Es end => E
       requires Es ==K .Exps

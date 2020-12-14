@@ -39,15 +39,20 @@ module ERL-BIFS
 
   rule tuple_size({Exps}) => count(Exps)
 
-  syntax Exps ::= "#ErlListToKList" "(" Exp ")" [function]
+  syntax Exps ::= "#ErlListToKList" "(" Exp ")" [strict]
   rule #ErlListToKList( [ .Exps ] ) => .Exps
-  rule #ErlListToKList( [ H | T ] ) => H, #ErlListToKList( T )
-  rule list_to_tuple((L,.Exps)) => { #ErlListToKList(L) }
+  rule #ErlListToKList( [ H, (.Exps) | T ] ) => H, #ErlListToKList( T )
+  rule #ErlListToKList( [Es:Exps] ) => #ErlListToKList( [Es | [.Exps]] ) requires Es =/=K .Exps     // List normalisation
+  rule #ErlListToKList( [E:Exp,Es | T] ) => #ErlListToKList( [E | [Es|T]] ) requires Es =/=K .Exps  // List normalisation
+  rule list_to_tuple(L) => { #ErlListToKList(L) }
 
-  syntax Exp ::= "#KListToErlList" "(" Exps ")" [function]
+  /* syntax Exp ::= "#KListToErlList" "(" Exps ")" [function]
   rule #KListToErlList( .Exps ) => [.Exps]
   rule #KListToErlList( E:Exp ) => [E]
   rule #KListToErlList( E:Exp, Es:Exps ) => [ E | #KListToErlList( Es ) ]
-  rule tuple_to_list(({ Es },.Exps)) => #KListToErlList (Es)
+  rule tuple_to_list(({ Es },.Exps)) => #KListToErlList (Es) */
+  
+  rule tuple_to_list({ Es }) => [ Es ]      // After using this rule, list normalisation does not apply
+  
 
 endmodule

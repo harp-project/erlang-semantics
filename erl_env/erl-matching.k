@@ -59,41 +59,41 @@ module ERL-MATCHING
   // With guards
   // TODO: when we will have exceptions: exception means false
 
-  rule <k> matches(Exp, (P when G:GuardSeq -> E ; Ms)) =>
-       transformGS(G) ~> matches(Exp, (P when HOLE -> E ; Ms)) ~> restoreEnv(Env) ...</k>
+  rule <k> matches(Exp, (P when G:GuardSeq -> Es ; Ms)) =>
+       transformGS(G) ~> matches(Exp, (P when HOLE -> Es ; Ms)) ~> restoreEnv(Env) ...</k>
        <env> Env =>  updateMap(Env,getMatching(Exp, P, Env)) </env>
       requires (notBool isValue(G)) andBool (isMatching(Exp, P, Env))
       // [heat]
 
-  rule G:Value ~> matches(Exp, (P when HOLE -> E ; Ms)) => matches(Exp, (P when G -> E ; Ms))
+  rule G:Value ~> matches(Exp, (P when HOLE -> Es ; Ms)) => matches(Exp, (P when G -> Es ; Ms))
       // [cool]
 
-  rule matches(Exp, (P when true -> E ; Ms)) => E
-  rule <k> matches(Exp, (P when V:Value -> E ; Ms)) ~> restoreEnv(Env) => matches(Exp, Ms) ... </k>
+  rule matches(Exp, (P when true -> Es ; Ms)) => begin Es end
+  rule <k> matches(Exp, (P when V:Value -> Es ; Ms)) ~> restoreEnv(Env) => matches(Exp, Ms) ... </k>
        <env> Env0 => Env </env>
       requires (V =/=K true) andBool (Ms =/=K .Match)
-  rule matches(Exp, (P when V:Value-> E ; .Match)) => badmatch
+  rule matches(Exp, (P when V:Value-> Es ; .Match)) => badmatch
       requires (V =/=K true)
 
-  rule <k> matches(Exp, P when _ -> E) => badmatch </k>
+  rule <k> matches(Exp, P when _ -> Es) => badmatch </k>
        <env> Env </env>
       requires notBool (isMatching(Exp, P, Env))
 
-  rule <k> matches(Exp, (P when _ -> E ; Ms)) => matches(Exp, Ms) ...</k>
+  rule <k> matches(Exp, (P when _ -> Es ; Ms)) => matches(Exp, Ms) ...</k>
       <env> Env </env>
       requires (notBool (isMatching(Exp, P, Env))) andBool (Ms =/=K .Match)
 
   // Without guards - funs
-  rule <k> matchesFun(Exp, P -> E) => badmatch </k>
+  rule <k> matchesFun(Exp, P -> Es) => badmatch </k>
        <env> Env </env>
       requires notBool (isMatching(Exp, P, removeAll(Env, fvs(P))))
-  rule <k> matchesFun(Exp, P -> E) => E ...</k>
+  rule <k> matchesFun(Exp, P -> Es) => begin Es end ...</k>
        <env> Env => updateMap(Env, getMatching(Exp, P, removeAll(Env, fvs(P)))) </env>
       requires isMatching(Exp, P,  removeAll(Env, fvs(P)))    
-  rule <k> matchesFun(Exp, (P -> E ; Ms)) => E ...</k>
+  rule <k> matchesFun(Exp, (P -> Es ; Ms)) => begin Es end ...</k>
        <env> Env => updateMap(Env,getMatching(Exp, P, removeAll(Env, fvs(P)))) </env>
       requires isMatching(Exp, P, removeAll(Env, fvs(P)))
-  rule <k> matchesFun(Exp, (P -> E ; Ms)) => matchesFun(Exp, Ms) ...</k>
+  rule <k> matchesFun(Exp, (P -> Es ; Ms)) => matchesFun(Exp, Ms) ...</k>
        <env> Env </env>
       requires (notBool (isMatching(Exp, P, removeAll(Env, fvs(P))))) andBool (Ms =/=K .Match)
 
