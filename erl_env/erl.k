@@ -51,9 +51,13 @@ module ERL
 // -----------------------------------------------------------------------------
 // Arithmetic operators
 
+  syntax Atom ::= "badarith" [token]
+
   rule I1 *   I2 => I1 *Int I2
   rule I1 div I2 => I1 /Int I2 requires I2 =/=Int 0
+  rule I1 div I2 => badarith requires I2 ==Int 0
   rule I1 rem I2 => I1 %Int I2 requires I2 =/=Int 0
+  rule I1 rem I2 => badarith requires I2 ==Int 0
   rule I1 +   I2 => I1 +Int I2
   rule I1 -   I2 => I1 -Int I2
 
