@@ -114,6 +114,6 @@ module ERL-FORMS
   rule toMFATupleSet(M, (F:Atom/A:Int, FAs)) => SetItem({M,F,A}) toMFATupleSet(M, FAs)
 
   syntax Int ::= arity(Exps) [function]
-  rule arity(Es) => count(Es)
+  rule arity(Es) => %count(Es)
 
 endmodule

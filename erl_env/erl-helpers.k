@@ -7,9 +7,9 @@ module ERL-HELPERS
   imports ERL-CONFIGURATION
 
   // Returns the length of the expression list
-  syntax Int ::= count(Exps)  [function]
-  rule count(.Exps) => 0
-  rule count(X:Exp,Xs:Exps) => ((count(Xs)) +Int 1)
+  syntax Int ::= "%count" "(" Exps ")"  [function]
+  rule %count(.Exps) => 0
+  rule %count(X:Exp,Xs:Exps) => ((%count(Xs)) +Int 1)
 
   syntax Variable ::= parseVar(String) [function]
   rule parseVar(Str) => #parseToken("Variable", Str)

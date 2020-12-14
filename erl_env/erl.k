@@ -91,13 +91,13 @@ module ERL
 
   rule {(.Values)}   < {(.Values)}       => false
   rule {(X:Value,Xs:Values)}  < {(Y:Value,Ys:Values)} => X < Y
-       requires count(Xs) ==Int 0 andBool count(Ys) ==Int 0
+       requires %count(Xs) ==Int 0 andBool %count(Ys) ==Int 0
        [structural]
   rule {(X:Value,Xs:Values)} < {(Y:Value,Ys:Values)} => (X < Y) orelse (X == Y andalso {Xs} < {Ys})
-       requires count(Xs) ==Int count(Ys) andBool count(Xs) >Int 0 andBool count(Ys) >Int 0
+       requires %count(Xs) ==Int %count(Ys) andBool %count(Xs) >Int 0 andBool %count(Ys) >Int 0
        [structural]
-  rule {(X:Value,Xs:Values)} < {(Y:Value,Ys:Values)} => count(Xs) <Int count(Ys)
-       requires count(Xs) =/=Int count(Ys)
+  rule {(X:Value,Xs:Values)} < {(Y:Value,Ys:Values)} => %count(Xs) <Int %count(Ys)
+       requires %count(Xs) =/=Int %count(Ys)
 
   rule [.Exps]    < [V | Vs] => true
   rule [.Exps]    < [.Exps]  => false
@@ -223,7 +223,7 @@ module ERL
          <mod>
            ...
            <modname> CurrentMod </modname>
-           <fundefs>...  {F, count(A)} |-> L:List ...</fundefs>
+           <fundefs>...  {F, %count(A)} |-> L:List ...</fundefs>
            ...
          </mod> ...
        </mods>
@@ -240,14 +240,14 @@ module ERL
          <mod>
            ... 
            <modname> CurrentMod </modname>
-           <imports> (S1:Set) SetItem({M, F, count(A)}) </imports>
+           <imports> (S1:Set) SetItem({M, F, %count(A)}) </imports>
            ...
          </mod>
          <mod>
            ... 
            <modname> M </modname>
-           <exports> (S2:Set) SetItem({F, count(A)}) </exports>
-           <fundefs>... {F, count(A)} |-> L:List ...</fundefs>
+           <exports> (S2:Set) SetItem({F, %count(A)}) </exports>
+           <fundefs>... {F, %count(A)} |-> L:List ...</fundefs>
            ...
          </mod> ...
        </mods>
@@ -263,8 +263,8 @@ module ERL
          <mod>
            ... 
            <modname> Mod </modname>
-           <exports> (S:Set) SetItem({F, count(A)}) </exports>
-           <fundefs>...  {F, count(A)} |-> L:List ...</fundefs>
+           <exports> (S:Set) SetItem({F, %count(A)}) </exports>
+           <fundefs>...  {F, %count(A)} |-> L:List ...</fundefs>
            ...
          </mod> ...
        </mods>
