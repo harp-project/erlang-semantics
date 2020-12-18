@@ -42,11 +42,13 @@ module ERL
   rule <k> Var:Variable => Value ...</k>
        <env> ... Var |-> Value ...</env>
        <funVars> FunVars  </funVars>
+       <trace> ... "lookup_var" |-> (V => V +Int 1) ... </trace>
        requires notBool (Var in keys(FunVars))
 
 
   rule <k> Var:Variable => Value ...</k>
        <funVars> ... Var |-> Value ...</funVars>
+       <trace> ... "lookup_fun" |-> (V => V +Int 1) ... </trace>
        
 // -----------------------------------------------------------------------------
 // Arithmetic operators
