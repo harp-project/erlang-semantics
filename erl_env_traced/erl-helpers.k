@@ -34,21 +34,17 @@ module ERL-HELPERS
   syntax Exp ::= RestoreEnv
   rule <k> Val:KResult ~> restoreEnv(Orig) => Val ...</k>
        <env> Env => Orig </env>
-       <trace> ... "restore_env" |-> (V => V +Int 1) ... </trace>
   rule <k> restoreEnv(Orig) => . ...</k>
        <env> Env => Orig </env>
-       <trace> ... "restore_env" |-> (V => V +Int 1) ... </trace>
 
   syntax Exp ::= restoreAll(Map,Map,Map)
   rule <k> Val:KResult ~> restoreAll(Env0, FunVars0, FunEnv0) => Val ...</k>
        <env> Env => Env0 </env>
        <funVars> FunVars => FunVars0 </funVars>
        <funEnv> FunEnv => FunEnv0 </funEnv>
-       <trace> ... "restore_all" |-> (V => V +Int 1) ... </trace>
   rule <k> restoreAll(Env0, FunVars0, FunEnv0) => . ...</k>
        <env> Env => Env0 </env>
        <funVars> FunVars => FunVars0 </funVars>
        <funEnv> FunEnv => FunEnv0 </funEnv>
-       <trace> ... "restore_all" |-> (V => V +Int 1) ... </trace>
 
 endmodule

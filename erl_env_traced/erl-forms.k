@@ -8,22 +8,17 @@ module ERL-FORMS
   imports ERL-CONFIGURATION
   imports ERL-HELPERS
 
-  rule <k> M1:Module M2:Modules => M1 ~> M2 ... </k>
-       <trace> ... "module_init" |-> (V => V +Int 1) ... </trace> [structural]
+  rule <k> M1:Module M2:Modules => M1 ~> M2 ... </k> [structural]
 
-  rule <k> M:ModuleAttrib A:Attribs F:FunDefs => M ~> A ~> F ... </k>
-       <trace> ... "module_attr_init" |-> (V => V +Int 1) ... </trace> [structural]
-  rule <k> A:Attrib As:Attribs => A ~> As ... </k>
-       <trace> ... "attr_init" |-> (V => V +Int 1) ... </trace> [structural]
-  rule <k> F1:FunCl F2:FunDefs => F1 ~> F2 ... </k>
-       <trace> ... "fundefs_init" |-> (V => V +Int 1) ... </trace> [structural]
+  rule <k> M:ModuleAttrib A:Attribs F:FunDefs => M ~> A ~> F ... </k> [structural]
+  rule <k> A:Attrib As:Attribs => A ~> As ... </k> [structural]
+  rule <k> F1:FunCl F2:FunDefs => F1 ~> F2 ... </k> [structural]
 
   rule .Attribs ~> F:FunDefs => F:FunDefs [structural]
 
   // Creates a new module
   rule <k> -module(ModName:Atom). => . ... </k>
        <currentMod> _ => ModName </currentMod>
-       <trace> ... "module" |-> (V => V +Int 1) ... </trace>
        <mods> ...
          (. => <mod>
            <modname> ModName </modname>
@@ -37,7 +32,6 @@ module ERL-FORMS
   // Insert exports
   rule <k> -export([FAs:NameArities]). => . ... </k>
        <currentMod> ModName </currentMod>
-       <trace> ... "export" |-> (V => V +Int 1) ... </trace>
        <mods> ...
          <mod>
            ...
@@ -51,7 +45,6 @@ module ERL-FORMS
   // Insert imports
   rule <k> -import(M:Atom, [FAs:NameArities]). => . ... </k>
        <currentMod> ModName </currentMod>
-       <trace> ... "import" |-> (V => V +Int 1) ... </trace>
        <mods> ...
          <mod>
            ...
@@ -66,7 +59,6 @@ module ERL-FORMS
 
   rule <k>Name:Atom(Args) -> Body . =>. ...</k>
        <currentMod> ModName </currentMod>
-       <trace> ... "fundefs" |-> (V => V +Int 1) ... </trace>
        <mods> ...
          <mod>
            ...
@@ -78,7 +70,6 @@ module ERL-FORMS
 
   rule <k>Name:Atom(Args) -> Body ; =>. ...</k>
        <currentMod> ModName </currentMod>
-       <trace> ... "fundefs" |-> (V => V +Int 1) ... </trace>
        <mods> ...
          <mod>
            ...
@@ -90,7 +81,6 @@ module ERL-FORMS
 
   rule <k>Name:Atom(Args) -> Body . =>. ...</k>
        <currentMod> ModName </currentMod>
-       <trace> ... "fundefs" |-> (V => V +Int 1) ... </trace>
        <mods> ...
          <mod>
            ...
@@ -103,7 +93,6 @@ module ERL-FORMS
 
   rule <k>Name:Atom(Args) -> Body ; =>. ...</k>
        <currentMod> ModName </currentMod>
-       <trace> ... "fundefs" |-> (V => V +Int 1) ... </trace>
        <mods> ...
          <mod>
            ...

@@ -312,7 +312,7 @@ module ERL
        </k>
        <env> Env => .Map </env>
        <currentMod> CurrentMod => M </currentMod>
-       <trace> ... "fa_import_call" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "fa_import_call" |-> (V => V +Int 1) ... </trace>
        <mods> ...
          <mod>
            ... 

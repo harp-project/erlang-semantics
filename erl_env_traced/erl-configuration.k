@@ -17,27 +17,6 @@ module ERL-CONFIGURATION
                   <funVars> .Map </funVars>
                   <funEnv> .Map </funEnv>
                   <trace color="blue"> 
-                    
-                    // helpers
-                    "lookup_var" |-> 0
-                    "lookup_fun" |-> 0
-                    "restore_env" |-> 0
-                    "restore_all" |-> 0
-                    "count" |-> 0
-                    "parseVar" |-> 0
-                    "fv" |-> 0
-                    "fvs" |-> 0
-                    
-                    // forms
-                    "module" |-> 0
-                    "fundefs" |-> 0
-                    "modules" |-> 0
-                    "export" |-> 0
-                    "import" |-> 0
-                    "module_init" |-> 0
-                    "module_attr_init" |-> 0
-                    "attr_init" |-> 0
-                    "fundefs_init" |-> 0
 
                     // BIFs
                     "is_atom" |-> 0
@@ -52,19 +31,6 @@ module ERL-CONFIGURATION
                     "list_to_tuple" |-> 0
                     "tuple_to_list" |-> 0
                     "length" |-> 0
-                    
-                    
-                    /*// Exceptions
-                    "is_atom_ex" |-> 0
-                    "is_boolean_ex" |-> 0
-                    "is_integer_ex" |-> 0
-                    "is_number_ex" |-> 0
-                    "hd_ex" |-> 0
-                    "tl_ex" |-> 0
-                    "element_ex" |-> 0
-                    "setelement_ex" |-> 0
-                    "list_to_tuple_ex" |-> 0
-                    "tuple_to_list_ex" |-> 0*/
 
                     // Matching
                     "matches_and_restore" |-> 0
@@ -76,6 +42,9 @@ module ERL-CONFIGURATION
                     "matches_fun" |-> 0
 
                     // erl.k
+                    "lookup_var" |-> 0
+                    "lookup_fun" |-> 0
+
                     "mult" |-> 0
                     "div" |-> 0
                     "div_ex" |-> 0
