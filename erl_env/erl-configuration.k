@@ -15,10 +15,6 @@ module ERL-CONFIGURATION
                   <env color="red"> .Map </env>
                   <funVars> .Map </funVars>
                   <funEnv> .Map </funEnv>
-                  <trace color="blue"> 
-                    "lookup_var" |-> 0
-                    "lookup_fun" |-> 0
-                  </trace>
                   <sideEffects> .List </sideEffects>
                   <currentMod> main </currentMod>
                   <mods>

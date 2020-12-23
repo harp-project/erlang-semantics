@@ -55,6 +55,8 @@ module ERL-BIFS
        <trace> ... "length" |-> (V' => V' +Int 1) ... </trace>
   rule <k> length([V:Value, (.Exps) | Vs]) => 1 + length(Vs) ... </k>
        <trace> ... "length" |-> (V' => V' +Int 1) ... </trace>
+  // rule length( [Es:Exps] ) => length( [Es | [.Exps]] ) requires Es =/=K .Exps     // List normalisation
+  // rule length( [E:Exp,Es | T] ) => length( [E | [Es|T]] ) requires Es =/=K .Exps  // List normalisation
 
   rule <k> element(I:Int, ({E, Es}):Value) => E ... </k>
        <trace> ... "element" |-> (V' => V' +Int 1) ... </trace>
@@ -77,19 +79,17 @@ module ERL-BIFS
   syntax Exps ::= "#ErlListToKList" "(" Exp ")" [strict]
   rule #ErlListToKList( [ .Exps ] ) => .Exps
   rule #ErlListToKList( [ H, (.Exps) | T ] ) => H, #ErlListToKList( T )
-  rule #ErlListToKList( [Es:Exps] ) => #ErlListToKList( [Es | [.Exps]] ) requires Es =/=K .Exps     // List normalisation
-  rule #ErlListToKList( [E:Exp,Es | T] ) => #ErlListToKList( [E | [Es|T]] ) requires Es =/=K .Exps  // List normalisation
   rule <k> list_to_tuple(L) => { #ErlListToKList(L) } ... </k>
        <trace> ... "list_to_tuple" |-> (V' => V' +Int 1) ... </trace>
 
-  /* syntax Exp ::= "#KListToErlList" "(" Exps ")" [function]
+  syntax Exp ::= "#KListToErlList" "(" Exps ")" [strict]
   rule #KListToErlList( .Exps ) => [.Exps]
-  rule #KListToErlList( E:Exp ) => [E]
   rule #KListToErlList( E:Exp, Es:Exps ) => [ E | #KListToErlList( Es ) ]
-  rule tuple_to_list(({ Es },.Exps)) => #KListToErlList (Es) */
+  rule <k> tuple_to_list({ Es }) => #KListToErlList(Es) ...</k>
+       <trace> ... "tuple_to_list" |-> (V' => V' +Int 1) ... </trace> 
   
-  rule <k> tuple_to_list({ Es }) => [ Es ] ... </k>     // After using this rule, list normalisation does not apply
-       <trace> ... "tuple_to_list" |-> (V' => V' +Int 1) ... </trace>
+  /* rule <k> tuple_to_list({ Es }) => [ Es ] ... </k>     // After using this rule, list normalisation does not apply
+       <trace> ... "tuple_to_list" |-> (V' => V' +Int 1) ... </trace> */
   
 
 endmodule

@@ -32,9 +32,9 @@ module ERL
 
   // List to normal form
 
-  rule [Es:Exps] => [Es | [.Exps]] requires Es =/=K .Exps      [macro]
+  rule [Es:Exps] => [Es | [.Exps]] requires Es =/=K .Exps      [structural, anywhere]
 
-  rule [E:Exp,Es | T] => [E | [Es|T]] requires Es =/=K .Exps   [macro]
+  rule [E:Exp,Es | T] => [E | [Es|T]] requires Es =/=K .Exps   [structural, anywhere]
 
 // -----------------------------------------------------------------------------
 // Varible lookup

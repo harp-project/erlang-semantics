@@ -46,13 +46,12 @@ module ERL-BIFS
   rule #ErlListToKList( [E:Exp,Es | T] ) => #ErlListToKList( [E | [Es|T]] ) requires Es =/=K .Exps  // List normalisation
   rule list_to_tuple(L) => { #ErlListToKList(L) }
 
-  /* syntax Exp ::= "#KListToErlList" "(" Exps ")" [function]
+  syntax Exp ::= "#KListToErlList" "(" Exps ")" [strict]
   rule #KListToErlList( .Exps ) => [.Exps]
-  rule #KListToErlList( E:Exp ) => [E]
   rule #KListToErlList( E:Exp, Es:Exps ) => [ E | #KListToErlList( Es ) ]
-  rule tuple_to_list(({ Es },.Exps)) => #KListToErlList (Es) */
+  rule tuple_to_list({ Es }) => #KListToErlList (Es)
   
-  rule tuple_to_list({ Es }) => [ Es ]      // After using this rule, list normalisation does not apply
+  // rule tuple_to_list({ Es }) => [ Es ]      // After using this rule, list normalisation does not apply
   
 
 endmodule

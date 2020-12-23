@@ -32,9 +32,9 @@ module ERL
 
   // List to normal form
 
-  rule [Es:Exps] => [Es | [.Exps]] requires Es =/=K .Exps      [macro]
+  rule [Es:Exps] => [Es | [.Exps]] requires Es =/=K .Exps      [structural, anywhere]
 
-  rule [E:Exp,Es | T] => [E | [Es|T]] requires Es =/=K .Exps   [macro]
+  rule [E:Exp,Es | T] => [E | [Es|T]] requires Es =/=K .Exps   [structural, anywhere]
 
 // -----------------------------------------------------------------------------
 // Varible lookup
@@ -42,13 +42,11 @@ module ERL
   rule <k> Var:Variable => Value ...</k>
        <env> ... Var |-> Value ...</env>
        <funVars> FunVars  </funVars>
-       <trace> ... "lookup_var" |-> (V => V +Int 1) ... </trace>
        requires notBool (Var in keys(FunVars))
 
 
   rule <k> Var:Variable => Value ...</k>
        <funVars> ... Var |-> Value ...</funVars>
-       <trace> ... "lookup_fun" |-> (V => V +Int 1) ... </trace>
        
 // -----------------------------------------------------------------------------
 // Arithmetic operators
