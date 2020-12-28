@@ -82,6 +82,10 @@ module ERL
   rule <k> (E1:Int)    < (E2:Int)     => (E1 <Int E2) ... </k>
        <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
 
+  // converting Bool to String
+  rule #tokenToString(true) => "true"   [anywhere]
+  rule #tokenToString(false) => "false" [anywhere]
+
   rule <k> (E1:Atom)   < (E2:Atom)    => #tokenToString(E1) <String #tokenToString(E2) ... </k>
        <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
 

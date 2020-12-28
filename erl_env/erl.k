@@ -68,6 +68,10 @@ module ERL
 
   rule (E1:Int)    < (E2:Int)     => (E1 <Int E2)
 
+  // converting Bool to String
+  rule #tokenToString(true) => "true"   [anywhere]
+  rule #tokenToString(false) => "false" [anywhere]
+
   rule (E1:Atom)   < (E2:Atom)    => #tokenToString(E1) <String #tokenToString(E2)
 
   rule (E1:Int)  < (E2:Atom)    => true
