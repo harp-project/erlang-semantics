@@ -266,7 +266,7 @@ module ERL
   // Another version (idea: https://www.haskell.org/onlinereport/exps.html#list-comprehensions)
 
   rule <k> [ E || P <- L, GFs] =>
-       concatMap(fun (P) -> [E || GFs]; (?X:Joker) -> [(.Exps)] end, L) ... </k>
+       %concatMap(fun (P) -> [E || GFs]; (?X:Joker) -> [(.Exps)] end, L) ... </k>
        <trace> ... "listcomp" |-> (V => V +Int 1) ... </trace> 
        [structural]
 
@@ -279,9 +279,9 @@ module ERL
       <trace> ... "listcomp" |-> (V => V +Int 1) ... </trace> 
       requires notBool (isGenerator(Bool))
 
-  syntax Exp ::= concatMap(Exp, Exp)
-  rule concatMap(F, [(.Exps)]) => [(.Exps)]
-  rule concatMap(F, [X | Xs])  => F(X) ++ concatMap(F, Xs)
+  syntax Exp ::= "%concatMap(" Exp "," Exp ")"  [strict(2)]
+  rule %concatMap(F, [(.Exps)]) => [(.Exps)]
+  rule %concatMap(F, [X | Xs])  => F(X) ++ %concatMap(F, Xs)
 
 
 // -----------------------------------------------------------------------------

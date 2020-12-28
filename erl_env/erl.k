@@ -194,9 +194,8 @@ module ERL
   // Another version (idea: https://www.haskell.org/onlinereport/exps.html#list-comprehensions)
 
   rule [ E || P <- L, GFs] =>
-       concatMap(fun (P) -> [E || GFs]; (?X:Joker) -> [(.Exps)] end, L)
+       %concatMap(fun (P) -> [E || GFs]; (?X:Joker) -> [(.Exps)] end, L)
        [structural]
-
 
   rule [ E || Bool, GFs] =>
       case Bool of
@@ -205,9 +204,9 @@ module ERL
       end
       requires notBool (isGenerator(Bool))
 
-  syntax Exp ::= concatMap(Exp, Exp)   
-  rule concatMap(F, [(.Exps)]) => [(.Exps)]
-  rule concatMap(F, [X | Xs])  => F(X) ++ concatMap(F, Xs)
+  syntax Exp ::= "%concatMap(" Exp "," Exp ")"  [strict(2)]
+  rule %concatMap(F, [(.Exps)]) => [(.Exps)]
+  rule %concatMap(F, [X | Xs])  => F(X) ++ %concatMap(F, Xs)
 
 
 // -----------------------------------------------------------------------------
