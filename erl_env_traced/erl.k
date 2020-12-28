@@ -53,20 +53,20 @@ module ERL
 // -----------------------------------------------------------------------------
 // Arithmetic operators
 
-  syntax Atom ::= "badarith" [token]
+  // syntax Exception ::= %Exc "badarith" [token]
 
   rule <k> I1 *   I2 => I1 *Int I2 ... </k>
        <trace> ... "mult" |-> (V => V +Int 1) ... </trace>
   rule <k> I1 div I2 => I1 /Int I2 ... </k>
        <trace> ... "div" |-> (V => V +Int 1) ... </trace>
     requires I2 =/=Int 0
-  rule <k> I1 div I2 => badarith ... </k>
+  rule <k> I1 div I2 => %badarith ... </k>
        <trace> ... "div_ex" |-> (V => V +Int 1) ... </trace>
     requires I2 ==Int 0
   rule <k> I1 rem I2 => I1 %Int I2 ...  </k>
        <trace> ... "rem" |-> (V => V +Int 1) ... </trace>
     requires I2 =/=Int 0
-  rule <k> I1 rem I2 => badarith ... </k>
+  rule <k> I1 rem I2 => %badarith ... </k>
        <trace> ... "rem_ex" |-> (V => V +Int 1) ... </trace>
     requires I2 ==Int 0
   rule <k> I1 +   I2 => I1 +Int I2 ... </k>
@@ -184,16 +184,16 @@ module ERL
 // -----------------------------------------------------------------------------
 // Short-circuit logic operations
 
-  syntax Atom ::= "badarg" [token]
+  // syntax Atom ::= "badarg" [token]
 
-  rule <k> V1:Value and V2:Value => badarg ... </k>
+  rule <k> V1:Value and V2:Value => %badarg ... </k>
        <trace> ... "and_ex" |-> (V => V +Int 1) ... </trace>
     requires (V1 =/=K true andBool V1 =/=K false)
       orBool (V2 =/=K true andBool V2 =/=K false)
   rule <k> V1:Value and V2:Value  => V1 andalso V2 ... </k>
        <trace> ... "and" |-> (V => V +Int 1) ... </trace>   [structural]
 
-  rule <k> V1:Value or V2:Value => badarg ... </k>
+  rule <k> V1:Value or V2:Value => %badarg ... </k>
        <trace> ... "or_ex" |-> (V => V +Int 1) ... </trace>
     requires (V1 =/=K true andBool V1 =/=K false)
       orBool (V2 =/=K true andBool V2 =/=K false)
@@ -204,24 +204,24 @@ module ERL
        <trace> ... "andalso" |-> (V => V +Int 1) ... </trace> 
   rule <k> false andalso _   => false ... </k>
        <trace> ... "andalso" |-> (V => V +Int 1) ... </trace> 
-  rule <k> V:Value andalso _ => badarg ... </k>
-       <trace> ... "andalso" |-> (V' => V' +Int 1) ... </trace> 
+  rule <k> V:Value andalso _ => %badarg ... </k>
+       <trace> ... "andalso_ex" |-> (V' => V' +Int 1) ... </trace> 
     requires V =/=K true andBool V =/=K false
 
   rule <k> true  orelse  _   => true ... </k>
        <trace> ... "orelse" |-> (V => V +Int 1) ... </trace> 
   rule <k> false orelse  B   => B ... </k>
        <trace> ... "orelse" |-> (V => V +Int 1) ... </trace> 
-  rule <k> V:Value orelse _  => badarg ... </k>
-       <trace> ... "orelse" |-> (V' => V' +Int 1) ... </trace> 
+  rule <k> V:Value orelse _  => %badarg ... </k>
+       <trace> ... "orelse_ex" |-> (V' => V' +Int 1) ... </trace> 
     requires V =/=K true andBool V =/=K false
 
   rule <k> not true          => false ... </k>
        <trace> ... "not" |-> (V => V +Int 1) ... </trace> 
   rule <k> not false         => true ... </k>
        <trace> ... "not" |-> (V => V +Int 1) ... </trace> 
-  rule <k> not V:Value       => badarg ... </k>
-       <trace> ... "not" |-> (V' => V' +Int 1) ... </trace> 
+  rule <k> not V:Value       => %badarg ... </k>
+       <trace> ... "not_ex" |-> (V' => V' +Int 1) ... </trace> 
     requires V =/=K true andBool V =/=K false
 
 // -----------------------------------------------------------------------------

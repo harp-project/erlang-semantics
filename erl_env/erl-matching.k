@@ -10,7 +10,7 @@ module ERL-MATCHING
 
   // The resulted map of getMatching function contains this key
   // when the maching is unsuccesful.
-  syntax Atom ::= "badmatch" [token]
+  // syntax Atom ::= "%badmatch" [token]
 
   syntax Exp ::= matches(Value, Match)
   syntax Exp ::= matchesFun(Value, Match)
@@ -43,7 +43,7 @@ module ERL-MATCHING
        </k>
 
   // Without guards
-  rule <k> matches(Exp, P -> Es) => badmatch ...</k>
+  rule <k> matches(Exp, P -> Es) => %badmatch ...</k>
        <env> Env </env>
       requires notBool (isMatching(Exp, P, Env))
   rule <k> matches(Exp, P -> Es) => begin Es end ...</k>
@@ -72,10 +72,10 @@ module ERL-MATCHING
   rule <k> matches(Exp, (P when V:Value -> Es ; Ms)) ~> restoreEnv(Env) => matches(Exp, Ms) ... </k>
        <env> Env0 => Env </env>
       requires (V =/=K true) andBool (Ms =/=K .Match)
-  rule matches(Exp, (P when V:Value-> Es ; .Match)) => badmatch
+  rule matches(Exp, (P when V:Value-> Es ; .Match)) => %badmatch
       requires (V =/=K true)
 
-  rule <k> matches(Exp, P when _ -> Es) => badmatch </k>
+  rule <k> matches(Exp, P when _ -> Es) => %badmatch </k>
        <env> Env </env>
       requires notBool (isMatching(Exp, P, Env))
 
@@ -84,7 +84,7 @@ module ERL-MATCHING
       requires (notBool (isMatching(Exp, P, Env))) andBool (Ms =/=K .Match)
 
   // Without guards - funs
-  rule <k> matchesFun(Exp, P -> Es) => badmatch </k>
+  rule <k> matchesFun(Exp, P -> Es) => %badmatch </k>
        <env> Env </env>
       requires notBool (isMatching(Exp, P, removeAll(Env, fvs(P))))
   rule <k> matchesFun(Exp, P -> Es) => begin Es end ...</k>
@@ -104,8 +104,14 @@ module ERL-MATCHING
   rule transformGS(Gs:Exps; .GuardSeq)  => transformGs(Gs)
   rule transformGS(Gs:Exps)  => transformGs(Gs)
 
+  syntax Exp ::= "%andalsofalse(" Exp "," Exp ")"    [strict(1)]
+  rule %andalsofalse(true, B)   => B
+  rule %andalsofalse(false, _)  => false
+  rule %andalsofalse(V:Value, _) => false
+    requires V =/=K true andBool V =/=K false
+
   syntax Exp ::= transformGs(Exps) [function]
-  rule transformGs(G:Exp, Gs:Exps) => G andalso transformGs(Gs) requires Gs =/=K .Exps
+  rule transformGs(G:Exp, Gs:Exps) => %andalsofalse(G, transformGs(Gs)) requires Gs =/=K .Exps
   rule transformGs(G:Exp, .Exps) => G
 
   syntax Map ::= getMatching(Exp, Exp, Map) [function]
@@ -117,7 +123,7 @@ module ERL-MATCHING
   // basic values
   rule getMatching1(E, P:BasicValue, Env, M) => updateMap(Env,M)
       requires isBasicMatch(E,P)
-  rule getMatching1(E, P:BasicValue, Env, M) => Env[badmatch <- badmatch]
+  rule getMatching1(E, P:BasicValue, Env, M) => Env[%badmatch <- %badmatch]
       requires notBool isBasicMatch(E,P) 
   // allowing joker in patterns
   rule getMatching1(E, P:Joker, Env, M) => updateMap(Env,M)
@@ -137,14 +143,14 @@ module ERL-MATCHING
       requires (E1 ==K .Exps) andBool (E2 ==K .Exps)
   rule getMatching1([X:Value | Xs], [Y:Exp | Ys], Env, M) => getMatching1(Xs, Ys, Env, getMatching1(X, Y, Env, M))
 
-  rule getMatching1(_, _, Env, _) => Env[badmatch <- badmatch] [owise]
+  rule getMatching1(_, _, Env, _) => Env[%badmatch <- %badmatch] [owise]
 
   syntax Map ::= getMatchingList(Exps, Exps, Map, Map) [function]
   rule getMatchingList((.Exps), (.Exps), Env, M) => updateMap(Env,M)
 
   rule getMatchingList((X, Xs),(Y, Ys), Env, M)  =>
        getMatchingList(Xs,Ys, updateMap(Env,getMatching1(X,Y,Env,M)), getMatching1(X,Y,Env,M))
-  rule getMatchingList(_, _, Env, _) => Env[badmatch <- badmatch] [owise]
+  rule getMatchingList(_, _, Env, _) => Env[%badmatch <- %badmatch] [owise]
 
   syntax Bool ::= isBasicMatch(Exp, BasicValue) [function]
   rule isBasicMatch(I1:Int, I2:Int) => I1 ==Int I2
@@ -152,8 +158,8 @@ module ERL-MATCHING
   rule isBasicMatch(_, _) => false [owise]
 
   syntax Bool ::= isMatching(Exp, Exp, Map) [function]
-  rule isMatching(E, P, Env) => notBool (badmatch in (keys(getMatching(E, P, Env))))
+  rule isMatching(E, P, Env) => notBool (%badmatch in (keys(getMatching(E, P, Env))))
 
   // lemmas
-  // rule badmatch in (keys(getMatching1(E1, E2, _, _))) => E1 =/=K E2 [lemma] 
+  // rule %badmatch in (keys(getMatching1(E1, E2, _, _))) => E1 =/=K E2 [lemma] 
 endmodule

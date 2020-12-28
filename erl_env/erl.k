@@ -51,13 +51,13 @@ module ERL
 // -----------------------------------------------------------------------------
 // Arithmetic operators
 
-  syntax Atom ::= "badarith" [token]
+  // syntax Atom ::= "%badarith" [token]
 
   rule I1 *   I2 => I1 *Int I2
   rule I1 div I2 => I1 /Int I2 requires I2 =/=Int 0
-  rule I1 div I2 => badarith requires I2 ==Int 0
+  rule I1 div I2 => %badarith requires I2 ==Int 0
   rule I1 rem I2 => I1 %Int I2 requires I2 =/=Int 0
-  rule I1 rem I2 => badarith requires I2 ==Int 0
+  rule I1 rem I2 => %badarith requires I2 ==Int 0
   rule I1 +   I2 => I1 +Int I2
   rule I1 -   I2 => I1 -Int I2
 
@@ -135,29 +135,29 @@ module ERL
 // -----------------------------------------------------------------------------
 // Short-circuit logic operations
 
-  syntax Atom ::= "badarg" [token]
+  // syntax Atom ::= "%badarg" [token]
 
-  rule V1:Value and V2:Value => badarg
+  rule V1:Value and V2:Value => %badarg
     requires (V1 =/=K true andBool V1 =/=K false)
       orBool (V2 =/=K true andBool V2 =/=K false)
   rule V1:Value and V2:Value  => V1 andalso V2
 
-  rule V1:Value or V2:Value => badarg
+  rule V1:Value or V2:Value => %badarg
     requires (V1 =/=K true andBool V1 =/=K false)
       orBool (V2 =/=K true andBool V2 =/=K false)
   rule V1:Value or V2:Value  => V1 orelse V2
 
   rule true  andalso B   => B
   rule false andalso _   => false
-  rule V:Value andalso _ => badarg requires V =/=K true andBool V =/=K false
+  rule V:Value andalso _ => %badarg requires V =/=K true andBool V =/=K false
 
   rule true  orelse  _   => true
   rule false orelse  B   => B
-  rule V:Value orelse _  => badarg requires V =/=K true andBool V =/=K false
+  rule V:Value orelse _  => %badarg requires V =/=K true andBool V =/=K false
 
   rule not true          => false
   rule not false         => true
-  rule not V:Value       => badarg requires V =/=K true andBool V =/=K false
+  rule not V:Value       => %badarg requires V =/=K true andBool V =/=K false
 
 // -----------------------------------------------------------------------------
 // List operations

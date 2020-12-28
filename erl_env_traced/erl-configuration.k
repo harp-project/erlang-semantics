@@ -7,7 +7,7 @@ module ERL-CONFIGURATION
   syntax BasicValue ::=  Atom | Int | Fun
   syntax Value ::=  BasicValue | "{" Values "}" | "[" Values "|" Value "]" | "[" Values "]"
   syntax Values ::= List{Value, ","}
-  syntax Exception ::= "%Exc" Value
+  syntax Exception ::= "%badarith" | "%badarg" | "%badmatch"
   syntax Exp ::= Value
   syntax KResult ::= Value | Exception
 
@@ -66,8 +66,11 @@ module ERL-CONFIGURATION
                     "and" |-> 0
                     "and_ex" |-> 0
                     "andalso" |-> 0
+                    "andalso_ex" |-> 0
                     "orelse" |-> 0
+                    "orelse_ex" |-> 0
                     "not" |-> 0
+                    "not_ex" |-> 0
 
                     "app" |-> 0
                     "diff" |-> 0
