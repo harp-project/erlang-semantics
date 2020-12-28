@@ -132,7 +132,7 @@ module ERL
        <trace> ... "lt_list" |-> (V => V +Int 1) ... </trace>
     requires %count(Xs) ==Int %count(Ys) andBool %count(Xs) >Int 0 andBool %count(Ys) >Int 0
     [structural]
-  rule <k> {(X:Value,Xs:Values)} < {(Y:Value,Ys:Values)} => %count(Xs) <Int %count(Ys) ... </k>
+  rule <k> {(Xs:Values)} < {(Ys:Values)} => %count(Xs) <Int %count(Ys) ... </k>
        <trace> ... "lt_list" |-> (V => V +Int 1) ... </trace>
     requires %count(Xs) =/=Int %count(Ys)
 
@@ -236,15 +236,16 @@ module ERL
        <trace> ... "diff" |-> (V => V +Int 1) ... </trace> 
   rule <k> [.Exps] -- [_ | _] => [.Exps] ... </k>
        <trace> ... "diff" |-> (V => V +Int 1) ... </trace> 
-  rule <k> [E1 | E1s] -- [E2 | Es2] => removeElement(E2, [E1 | E1s]) -- Es2 ... </k>
+  rule <k> [E1 | E1s] -- [E2 | Es2] => %removeElement(E2, [E1 | E1s]) -- Es2 ... </k>
        <trace> ... "diff" |-> (V => V +Int 1) ... </trace> 
   rule <k> [E1 | E1s] -- [.Exps] => [E1 | E1s] ... </k>
        <trace> ... "diff" |-> (V => V +Int 1) ... </trace> 
 
-  syntax Exp ::= removeElement(Exp, Exp)
-  rule removeElement(E, [E1 | E1s]) => E1s requires eq(E,E1)
-  rule removeElement(E, [E1 | E1s]) => [E1 | removeElement(E, E1s)] requires notBool (eq(E,E1))
-  rule removeElement(E, [.Exps]) => [.Exps]
+  syntax Exp ::= "%removeElement(" Exp "," Exp ")"   [strict]
+  rule %removeElement(E, [E1 | E1s]) => E1s requires eq(E,E1)
+  rule %removeElement(E, [E1 | E1s]) => [E1 | %removeElement(E, E1s)] requires notBool (eq(E,E1))
+  rule %removeElement(E, [.Exps]) => [.Exps]
+
 
 // -----------------------------------------------------------------------------
 // List comprehension

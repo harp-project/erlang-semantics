@@ -96,7 +96,7 @@ module ERL
   rule {(X:Value,Xs:Values)} < {(Y:Value,Ys:Values)} => (X < Y) orelse (X == Y andalso {Xs} < {Ys})
        requires %count(Xs) ==Int %count(Ys) andBool %count(Xs) >Int 0 andBool %count(Ys) >Int 0
        [structural]
-  rule {(X:Value,Xs:Values)} < {(Y:Value,Ys:Values)} => %count(Xs) <Int %count(Ys)
+  rule {(Xs:Values)} < {(Ys:Values)} => %count(Xs) <Int %count(Ys)
        requires %count(Xs) =/=Int %count(Ys)
 
   rule [.Exps]    < [V | Vs] => true
@@ -167,13 +167,13 @@ module ERL
 
   rule [.Exps] -- [.Exps] => [.Exps]
   rule [.Exps] -- [_ | _] => [.Exps]
-  rule [E1 | E1s] -- [E2 | Es2] => removeElement(E2, [E1 | E1s]) -- Es2
+  rule [E1 | E1s] -- [E2 | Es2] => %removeElement(E2, [E1 | E1s]) -- Es2
   rule [E1 | E1s] -- [.Exps] => [E1 | E1s]
 
-  syntax Exp ::= removeElement(Exp, Exp)
-  rule removeElement(E, [E1 | E1s]) => E1s requires eq(E,E1)
-  rule removeElement(E, [E1 | E1s]) => [E1 | removeElement(E, E1s)] requires notBool (eq(E,E1))
-  rule removeElement(E, [.Exps]) => [.Exps]
+  syntax Exp ::= "%removeElement(" Exp "," Exp ")"   [strict]
+  rule %removeElement(E, [E1 | E1s]) => E1s requires eq(E,E1)
+  rule %removeElement(E, [E1 | E1s]) => [E1 | %removeElement(E, E1s)] requires notBool (eq(E,E1))
+  rule %removeElement(E, [.Exps]) => [.Exps]
 
 // -----------------------------------------------------------------------------
 // List comprehension
