@@ -71,12 +71,10 @@ module ERL-MATCHING
   rule <k> matches(Exp, (P when G:GuardSeq -> Es ; Ms)) =>
        transformGS(G) ~> matches(Exp, (P when HOLE -> Es ; Ms)) ~> restoreEnv(Env) ...</k>
        <env> Env =>  updateMap(Env,getMatching(Exp, P, Env)) </env>
-       <trace> ... "matches_guard_heat" |-> (V' => V' +Int 1) ... </trace>
     requires (notBool isValue(G)) andBool (isMatching(Exp, P, Env))
       // [heat]
 
   rule <k>G:Value ~> matches(Exp, (P when HOLE -> Es ; Ms)) => matches(Exp, (P when G -> Es ; Ms)) ...</k>
-       <trace> ... "matches_guard_cool" |-> (V' => V' +Int 1) ... </trace>
       // [cool]
 
   rule <k> matches(Exp, (P when true -> Es ; Ms)) => begin Es end ... </k>

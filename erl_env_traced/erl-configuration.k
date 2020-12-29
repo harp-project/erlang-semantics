@@ -37,8 +37,6 @@ module ERL-CONFIGURATION
                     "matches_fun_and_restore" |-> 0
                     "matches" |-> 0
                     "matches_guard" |-> 0
-                    "matches_guard_heat" |-> 0
-                    "matches_guard_cool" |-> 0
                     "matches_fun" |-> 0
 
                     // erl.k
