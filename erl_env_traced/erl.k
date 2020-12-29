@@ -233,17 +233,22 @@ module ERL
 
   rule <k> [E1 | E1s] ++ E2 => [E1 | E1s ++ E2] ... </k>
        <trace> ... "app" |-> (V' => V' +Int 1) ... </trace> 
-  rule <k> [.Exps] ++ E2 => E2 ... </k>
-       <trace> ... "app" |-> (V' => V' +Int 1) ... </trace> 
+  rule <k> [.Values] ++ E2 => E2 ... </k>
+       <trace> ... "app" |-> (V' => V' +Int 1) ... </trace>
+  // NOTE: _:Value restriction is needed to aviod wrong rewriting
+  rule <k> _:Value ++ _ => %badarg ... </k>
+       <trace> ... "app_ex" |-> (V' => V' +Int 1) ... </trace>  [owise]
 
-  rule <k> [.Exps] -- [.Exps] => [.Exps] ... </k>
+  rule <k> [.Values] -- [.Values] => [.Values] ... </k>
        <trace> ... "diff" |-> (V' => V' +Int 1) ... </trace> 
-  rule <k> [.Exps] -- [_ | _] => [.Exps] ... </k>
+  rule <k> [.Values] -- [_ | _] => [.Values] ... </k>
        <trace> ... "diff" |-> (V' => V' +Int 1) ... </trace> 
   rule <k> [E1 | E1s] -- [E2 | Es2] => %removeElement(E2, [E1 | E1s]) -- Es2 ... </k>
        <trace> ... "diff" |-> (V' => V' +Int 1) ... </trace> 
-  rule <k> [E1 | E1s] -- [.Exps] => [E1 | E1s] ... </k>
-       <trace> ... "diff" |-> (V' => V' +Int 1) ... </trace> 
+  rule <k> [E1 | E1s] -- [.Values] => [E1 | E1s] ... </k>
+       <trace> ... "diff" |-> (V' => V' +Int 1) ... </trace>
+  rule <k> _:Value -- _:Value => %badarg ... </k>
+       <trace> ... "diff_ex" |-> (V' => V' +Int 1) ... </trace>  [owise]
 
   syntax Exp ::= "%removeElement(" Exp "," Exp ")"   [strict]
   rule %removeElement(E, [E1 | E1s]) => E1s requires eq(E,E1)

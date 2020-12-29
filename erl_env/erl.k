@@ -167,12 +167,15 @@ module ERL
 // List operations
 
   rule [E1 | E1s] ++ E2 => [E1 | E1s ++ E2]
-  rule [.Exps] ++ E2 => E2
+  rule [.Values] ++ E2 => E2
+  // NOTE: _:Value restriction is needed to aviod wrong rewriting
+  rule <k> _:Value ++ _ => %badarg ... </k> [owise]
 
-  rule [.Exps] -- [.Exps] => [.Exps]
-  rule [.Exps] -- [_ | _] => [.Exps]
+  rule [.Values] -- [.Values] => [.Values]
+  rule [.Values] -- [_ | _] => [.Values]
   rule [E1 | E1s] -- [E2 | Es2] => %removeElement(E2, [E1 | E1s]) -- Es2
-  rule [E1 | E1s] -- [.Exps] => [E1 | E1s]
+  rule [E1 | E1s] -- [.Values] => [E1 | E1s]
+  rule _:Value -- _:Value => %badarg  [owise]
 
   syntax Exp ::= "%removeElement(" Exp "," Exp ")"   [strict]
   rule %removeElement(E, [E1 | E1s]) => E1s requires eq(E,E1)

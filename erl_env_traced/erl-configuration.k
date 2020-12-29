@@ -73,7 +73,9 @@ module ERL-CONFIGURATION
                     "not_ex" |-> 0
 
                     "app" |-> 0
+                    "app_ex" |-> 0
                     "diff" |-> 0
+                    "diff_ex" |-> 0
                     "listcomp" |-> 0
 
                     "implicit_call" |-> 0
