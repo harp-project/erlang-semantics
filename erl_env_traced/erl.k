@@ -42,13 +42,13 @@ module ERL
   rule <k> Var:Variable => Value ...</k>
        <env> ... Var |-> Value ...</env>
        <funVars> FunVars  </funVars>
-       <trace> ... "lookup_var" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lookup_var" |-> (V' => V' +Int 1) ... </trace>
        requires notBool (Var in keys(FunVars))
 
 
   rule <k> Var:Variable => Value ...</k>
        <funVars> ... Var |-> Value ...</funVars>
-       <trace> ... "lookup_fun" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lookup_fun" |-> (V' => V' +Int 1) ... </trace>
        
 // -----------------------------------------------------------------------------
 // Arithmetic operators
@@ -56,23 +56,23 @@ module ERL
   // syntax Exception ::= %Exc "badarith" [token]
 
   rule <k> I1 *   I2 => I1 *Int I2 ... </k>
-       <trace> ... "mult" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "mult" |-> (V' => V' +Int 1) ... </trace>
   rule <k> I1 div I2 => I1 /Int I2 ... </k>
-       <trace> ... "div" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "div" |-> (V' => V' +Int 1) ... </trace>
     requires I2 =/=Int 0
   rule <k> I1 div I2 => %badarith ... </k>
-       <trace> ... "div_ex" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "div_ex" |-> (V' => V' +Int 1) ... </trace>
     requires I2 ==Int 0
   rule <k> I1 rem I2 => I1 %Int I2 ...  </k>
-       <trace> ... "rem" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "rem" |-> (V' => V' +Int 1) ... </trace>
     requires I2 =/=Int 0
   rule <k> I1 rem I2 => %badarith ... </k>
-       <trace> ... "rem_ex" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "rem_ex" |-> (V' => V' +Int 1) ... </trace>
     requires I2 ==Int 0
   rule <k> I1 +   I2 => I1 +Int I2 ... </k>
-      <trace> ... "plus" |-> (V => V +Int 1) ... </trace>
+      <trace> ... "plus" |-> (V' => V' +Int 1) ... </trace>
   rule <k> I1 -   I2 => I1 -Int I2 ... </k>
-       <trace> ... "minus" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "minus" |-> (V' => V' +Int 1) ... </trace>
 
 // -----------------------------------------------------------------------------
 // Comparison operators
@@ -80,85 +80,85 @@ module ERL
   // TODO: add funs to comparison
 
   rule <k> (E1:Int)    < (E2:Int)     => (E1 <Int E2) ... </k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace>
 
   // converting Bool to String
   rule #tokenToString(true) => "true"   [anywhere]
   rule #tokenToString(false) => "false" [anywhere]
 
   rule <k> (E1:Atom)   < (E2:Atom)    => #tokenToString(E1) <String #tokenToString(E2) ... </k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace>
 
   rule <k> (E1:Int)  < (E2:Atom)    => true ... </k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace>
   rule <k> (E1:Int)  < ({Es:Exps})  => true ... </k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace>
   rule <k> (E1:Int)  < [_]          => true ...</k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace>
   rule <k> (E1:Int)  < [_ | _]      => true ... </k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace>
   rule <k> (E1:Atom) < (E2:Int)     => false ... </k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace>
   rule <k> (E1:Atom) < {Vs}         => true ... </k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace>
   rule <k> (E1:Atom) < [_]          => true ... </k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace>
   rule <k> (E1:Atom) < [_ | _]      => true ... </k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace>
   rule <k> {Vs}      < (E2:Atom)    => false ... </k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace>
   rule <k> {Vs}      < (E2:Int)     => false ... </k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace>
   rule <k> [_]       < (E2:Atom)    => false ... </k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace>
   rule <k> [_|_]     < (E2:Atom)    => false ... </k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace>
   rule <k> [_]       < (E2:Int)     => false ... </k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace>
   rule <k> [_|_]     < (E2:Int)     => false ... </k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace>
   rule <k> {Vs}      < [_]          => true ... </k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace>
   rule <k> {Vs}      < [_|_]        => true ... </k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace>
   rule <k> [_]       < {Vs}         => false ...</k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace>
   rule <k> [_|_]     < {Vs}         => false ... </k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace>
 
   rule <k> {(.Values)}   < {(.Values)}       => false ... </k>
-       <trace> ... "lt_list" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt_list" |-> (V' => V' +Int 1) ... </trace>
   rule <k> {(X:Value,Xs:Values)}  < {(Y:Value,Ys:Values)} => X < Y ... </k>
-       <trace> ... "lt_list" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt_list" |-> (V' => V' +Int 1) ... </trace>
     requires %count(Xs) ==Int 0 andBool %count(Ys) ==Int 0   
     [structural]
   rule <k> {(X:Value,Xs:Values)} < {(Y:Value,Ys:Values)} => (X < Y) orelse (X == Y andalso {Xs} < {Ys}) ... </k>
-       <trace> ... "lt_list" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt_list" |-> (V' => V' +Int 1) ... </trace>
     requires %count(Xs) ==Int %count(Ys) andBool %count(Xs) >Int 0 andBool %count(Ys) >Int 0
     [structural]
   rule <k> {(Xs:Values)} < {(Ys:Values)} => %count(Xs) <Int %count(Ys) ... </k>
-       <trace> ... "lt_list" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt_list" |-> (V' => V' +Int 1) ... </trace>
     requires %count(Xs) =/=Int %count(Ys)
 
   rule <k> [.Exps]    < [V | Vs] => true ... </k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace>
   rule <k> [.Exps]    < [.Exps]  => false ... </k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace>
   rule <k> [V | Vs]   < [.Exps]  => false ... </k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace>
   rule <k> [V1 | Vs1] < [V2 | Vs2] => Vs1 < Vs2 ... </k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace> 
     requires eq(V1,V2) [structural]
   rule <k> [V1 | Vs1] < [V2 | Vs2] => V1 < V2 ... </k>
-       <trace> ... "lt" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "lt" |-> (V' => V' +Int 1) ... </trace>
     requires notBool (eq(V1,V2)) [structural]
 
   rule <k> (E1:Value) >= (E2:Value) => not (E1 < E2) ... </k>
-       <trace> ... "ge" |-> (V => V +Int 1) ... </trace> [structural]
+       <trace> ... "ge" |-> (V' => V' +Int 1) ... </trace> [structural]
   rule <k> (E1:Value) >  (E2:Value) => (E2 < E1) ... </k>
-       <trace> ... "gt" |-> (V => V +Int 1) ... </trace>    [structural]
+       <trace> ... "gt" |-> (V' => V' +Int 1) ... </trace>    [structural]
   rule <k> (E1:Value) =< (E2:Value) => not (E2 < E1) ... </k> 
-       <trace> ... "le" |-> (V => V +Int 1) ... </trace> [structural]
+       <trace> ... "le" |-> (V' => V' +Int 1) ... </trace> [structural]
 
 // -----------------------------------------------------------------------------
 // Equality checks
@@ -166,10 +166,10 @@ module ERL
   // TODO: add funs to equality checks
 
   rule <k> V1 == V2 => eq(V1,V2) ... </k>
-       <trace> ... "eq" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "eq" |-> (V' => V' +Int 1) ... </trace>
 
   rule <k> E1 /= E2 => not (E1 == E2) ... </k>
-       <trace> ... "neq" |-> (V => V +Int 1) ... </trace> [structural]
+       <trace> ... "neq" |-> (V' => V' +Int 1) ... </trace> [structural]
 
   syntax Bool ::= eq(Value, Value) [function]
 
@@ -191,39 +191,39 @@ module ERL
   // syntax Atom ::= "badarg" [token]
 
   rule <k> V1:Value and V2:Value => %badarg ... </k>
-       <trace> ... "and_ex" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "and_ex" |-> (V' => V' +Int 1) ... </trace>
     requires (V1 =/=K true andBool V1 =/=K false)
       orBool (V2 =/=K true andBool V2 =/=K false)
   rule <k> V1:Value and V2:Value  => V1 andalso V2 ... </k>
-       <trace> ... "and" |-> (V => V +Int 1) ... </trace>   [structural]
+       <trace> ... "and" |-> (V' => V' +Int 1) ... </trace>   [structural]
 
   rule <k> V1:Value or V2:Value => %badarg ... </k>
-       <trace> ... "or_ex" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "or_ex" |-> (V' => V' +Int 1) ... </trace>
     requires (V1 =/=K true andBool V1 =/=K false)
       orBool (V2 =/=K true andBool V2 =/=K false)
   rule <k> V1:Value or V2:Value  => V1 orelse V2 ... </k>
-       <trace> ... "or" |-> (V => V +Int 1) ... </trace>     [structural]
+       <trace> ... "or" |-> (V' => V' +Int 1) ... </trace>     [structural]
 
   rule <k> true  andalso B   => B ... </k>
-       <trace> ... "andalso" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "andalso" |-> (V' => V' +Int 1) ... </trace> 
   rule <k> false andalso _   => false ... </k>
-       <trace> ... "andalso" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "andalso" |-> (V' => V' +Int 1) ... </trace> 
   rule <k> V:Value andalso _ => %badarg ... </k>
        <trace> ... "andalso_ex" |-> (V' => V' +Int 1) ... </trace> 
     requires V =/=K true andBool V =/=K false
 
   rule <k> true  orelse  _   => true ... </k>
-       <trace> ... "orelse" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "orelse" |-> (V' => V' +Int 1) ... </trace> 
   rule <k> false orelse  B   => B ... </k>
-       <trace> ... "orelse" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "orelse" |-> (V' => V' +Int 1) ... </trace> 
   rule <k> V:Value orelse _  => %badarg ... </k>
        <trace> ... "orelse_ex" |-> (V' => V' +Int 1) ... </trace> 
     requires V =/=K true andBool V =/=K false
 
   rule <k> not true          => false ... </k>
-       <trace> ... "not" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "not" |-> (V' => V' +Int 1) ... </trace> 
   rule <k> not false         => true ... </k>
-       <trace> ... "not" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "not" |-> (V' => V' +Int 1) ... </trace> 
   rule <k> not V:Value       => %badarg ... </k>
        <trace> ... "not_ex" |-> (V' => V' +Int 1) ... </trace> 
     requires V =/=K true andBool V =/=K false
@@ -232,18 +232,18 @@ module ERL
 // List operations
 
   rule <k> [E1 | E1s] ++ E2 => [E1 | E1s ++ E2] ... </k>
-       <trace> ... "app" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "app" |-> (V' => V' +Int 1) ... </trace> 
   rule <k> [.Exps] ++ E2 => E2 ... </k>
-       <trace> ... "app" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "app" |-> (V' => V' +Int 1) ... </trace> 
 
   rule <k> [.Exps] -- [.Exps] => [.Exps] ... </k>
-       <trace> ... "diff" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "diff" |-> (V' => V' +Int 1) ... </trace> 
   rule <k> [.Exps] -- [_ | _] => [.Exps] ... </k>
-       <trace> ... "diff" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "diff" |-> (V' => V' +Int 1) ... </trace> 
   rule <k> [E1 | E1s] -- [E2 | Es2] => %removeElement(E2, [E1 | E1s]) -- Es2 ... </k>
-       <trace> ... "diff" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "diff" |-> (V' => V' +Int 1) ... </trace> 
   rule <k> [E1 | E1s] -- [.Exps] => [E1 | E1s] ... </k>
-       <trace> ... "diff" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "diff" |-> (V' => V' +Int 1) ... </trace> 
 
   syntax Exp ::= "%removeElement(" Exp "," Exp ")"   [strict]
   rule %removeElement(E, [E1 | E1s]) => E1s requires eq(E,E1)
@@ -255,7 +255,7 @@ module ERL
 // List comprehension
 
   rule <k> [ E || (.GFs)] => [E] ... </k>
-       <trace> ... "listcomp" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "listcomp" |-> (V' => V' +Int 1) ... </trace>
 
   // TODO: fresh vars instead of "MyFun_111", "X_111" and "Xs_111"
   // rule [ E || P <- L, GFs] =>
@@ -272,7 +272,7 @@ module ERL
 
   rule <k> [ E || P <- L, GFs] =>
        %concatMap(fun (P) -> [E || GFs]; (?X:Joker) -> [(.Exps)] end, L) ... </k>
-       <trace> ... "listcomp" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "listcomp" |-> (V' => V' +Int 1) ... </trace> 
        [structural]
 
 
@@ -281,7 +281,7 @@ module ERL
         true -> [E || GFs];
         (?X:Joker) -> [(.Exps)]
       end ...</k>
-      <trace> ... "listcomp" |-> (V => V +Int 1) ... </trace> 
+      <trace> ... "listcomp" |-> (V' => V' +Int 1) ... </trace> 
       requires notBool (isGenerator(Bool))
 
   syntax Exp ::= "%concatMap(" Exp "," Exp ")"  [strict(2)]
@@ -297,7 +297,7 @@ module ERL
   rule <k>F:Atom(A:Values) =>
           matchesAndRestore({A}, getMatch(L), Env) ...</k>
        <env> Env => .Map </env>
-       <trace> ... "fa_local_call" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "fa_local_call" |-> (V' => V' +Int 1) ... </trace> 
        <currentMod> CurrentMod </currentMod>
        
        <mods> ...
@@ -317,7 +317,7 @@ module ERL
        </k>
        <env> Env => .Map </env>
        <currentMod> CurrentMod => M </currentMod>
-       <trace> ... "fa_import_call" |-> (V => V +Int 1) ... </trace>
+       <trace> ... "fa_import_call" |-> (V' => V' +Int 1) ... </trace>
        <mods> ...
          <mod>
            ... 
@@ -341,7 +341,7 @@ module ERL
        </k>
        <env> Env => .Map </env>
        <currentMod> CurrentMod => M </currentMod>
-       <trace> ... "mfa_call" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "mfa_call" |-> (V' => V' +Int 1) ... </trace> 
        <mods> ...
          <mod>
            ... 
@@ -356,14 +356,14 @@ module ERL
   rule <k>(fun Cls:Clauses end)(Args) =>
           matchesFunAndRestore({Args}, getMatchFromFun(Cls), Env) ...</k>
        <env> Env </env>   
-       <trace> ... "anon_call" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "anon_call" |-> (V' => V' +Int 1) ... </trace> 
        requires notBool (isNamedFun(fun Cls:Clauses end))
 
 // Call to an anonymous function with a variable as "name"
   rule <k>(fun Cls:Clauses end)(Args) =>
           matchesFunAndRestoreAll({Args}, getMatchFromFun(Cls), Env, FunVars, FunEnv) ...</k>
        <env> Env </env>
-       <trace> ... "anon_call_var" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "anon_call_var" |-> (V' => V' +Int 1) ... </trace> 
        <funVars> FunVars => updateMap(FunVars, getNewFunvar(fun Cls:Clauses end)) </funVars>
        <funEnv> FunEnv => FunEnv getFunvar(fun Cls:Clauses end) |-> Env</funEnv>
        requires (isNamedFun(fun Cls:Clauses end)) andBool (notBool (getFunvar(fun Cls:Clauses end) in keys(FunVars)))
@@ -372,7 +372,7 @@ module ERL
   rule <k> (fun Cls:Clauses end)(Args) =>
            matchesFunAndRestore({Args}, getMatchFromFun(Cls), Env) ... </k>
        <env> Env => FunEnv </env>
-       <trace> ... "recursive_call" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "recursive_call" |-> (V' => V' +Int 1) ... </trace> 
        <funVars> FunVars </funVars>
        <funEnv> ... getFunvar(fun Cls:Clauses end) |-> FunEnv ... </funEnv>
        requires (isNamedFun(fun Cls:Clauses end)) andBool (getFunvar(fun Cls:Clauses end) in keys(FunVars))
@@ -380,24 +380,24 @@ module ERL
 // Call to an implicit fun
   rule <k> fun Name:Atom/Arity:Int(Args) =>
        fun(genArgs(Arity)) -> Name(genArgs(Arity)) end(Args) ... </k>
-       <trace> ... "implicit_call" |-> (V => V +Int 1) ... </trace> [structural]
+       <trace> ... "implicit_call" |-> (V' => V' +Int 1) ... </trace> [structural]
 
 // -----------------------------------------------------------------------------
 // If expression
 
   rule <k> if Gs -> E end => case true of true when Gs -> E end ... </k>
-       <trace> ... "if" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "if" |-> (V' => V' +Int 1) ... </trace> 
      [structural]
 
   rule <k> if Gs -> E; GCl end => case true of true when Gs -> E; true -> if GCl end end ... </k>
-       <trace> ... "if" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "if" |-> (V' => V' +Int 1) ... </trace> 
      [structural]
 
 // -----------------------------------------------------------------------------
 // Case expression
 
   rule <k> case E:Value of M:Match end => matchesAndRestore(E,M,Env) ... </k>
-       <trace> ... "case" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "case" |-> (V' => V' +Int 1) ... </trace> 
        <env> Env </env>
 
 // -----------------------------------------------------------------------------
@@ -408,22 +408,22 @@ module ERL
   // rule E, .Exps => E // TODO / BEWARE / CAUTION / this may be too permissive
 
   rule <k> begin E, Es end => E ... </k>
-       <trace> ... "begin_end" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "begin_end" |-> (V' => V' +Int 1) ... </trace> 
       requires Es ==K .Exps
 
   rule <k> begin P = E, Es end => case E of P -> begin Es end end ... </k>
-       <trace> ... "begin_end" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "begin_end" |-> (V' => V' +Int 1) ... </trace> 
       requires Es =/=K .Exps
 
   rule <k> begin E , Es end => (case E of (?X:Joker) -> begin Es end end) ... </k>
-       <trace> ... "begin_end" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "begin_end" |-> (V' => V' +Int 1) ... </trace> 
       requires notBool (isMatchExp(E)) andBool (Es =/=K .Exps)
 
 // -----------------------------------------------------------------------------
 // Match expression
 
   rule <k> P = E => E ... </k>
-       <trace> ... "match" |-> (V => V +Int 1) ... </trace> 
+       <trace> ... "match" |-> (V' => V' +Int 1) ... </trace> 
 
 // =============================================================================
 // Local helper functions
