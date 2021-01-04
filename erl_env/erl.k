@@ -301,6 +301,22 @@ module ERL
   rule fun Name:Atom/Arity:Int(Args) =>
        fun(genArgs(Arity)) -> Name(genArgs(Arity)) end(Args) [structural]
 
+  rule <k>F:Value(A:Values) => %badfun ...</k>
+       <env> Env => .Map </env>
+       <currentMod> CurrentMod </currentMod>
+       
+       <mods> ...
+         <mod>
+           ...
+           <modname> CurrentMod </modname>
+           ...
+         </mod> ...
+       </mods>
+      requires notBool isAtom(F)  [owise]
+
+  rule <k> F:Atom(Vs:Values) => %undef ... </k> 
+    requires (notBool isBIF(F)) [owise]
+
 // -----------------------------------------------------------------------------
 // If expression
 

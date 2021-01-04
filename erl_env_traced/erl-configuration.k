@@ -7,7 +7,7 @@ module ERL-CONFIGURATION
   syntax BasicValue ::=  Atom | Int | Fun
   syntax Value ::=  BasicValue | "{" Values "}" | "[" Values "|" Value "]" | "[" Values "]"
   syntax Values ::= List{Value, ","}
-  syntax Exception ::= "%badarith" | "%badarg" | "%badmatch"
+  syntax Exception ::= "%badarith" | "%badarg" | "%badmatch" | "%badarity" | "%badfun" | "%undef"
   syntax Exp ::= Value
   syntax KResult ::= Value | Exception
 
@@ -19,10 +19,10 @@ module ERL-CONFIGURATION
                   <trace color="blue"> 
 
                     // BIFs
-                    "is_atom" |-> 0
-                    "is_boolean" |-> 0
-                    "is_integer" |-> 0
-                    "is_number" |-> 0
+                    // "is_atom" |-> 0 // TODO: these have been not generated yet
+                    // "is_boolean" |-> 0
+                    // "is_integer" |-> 0
+                    // "is_number" |-> 0
                     "hd" |-> 0
                     "tl" |-> 0
                     "element" |-> 0
@@ -80,9 +80,11 @@ module ERL-CONFIGURATION
                     "recursive_call" |-> 0
                     "anon_call" |-> 0
                     "anon_call_var" |-> 0
-                    "mfa_call" |-> 0
-                    "fa_import_call" |-> 0
+                   // "mfa_call" |-> 0
+                   // "fa_import_call" |-> 0
                     "fa_local_call" |-> 0
+                    "fa_call_undef" |-> 0
+                    "fa_call_badfun" |-> 0
                     "if" |-> 0
                     "case" |-> 0
                     "match" |-> 0

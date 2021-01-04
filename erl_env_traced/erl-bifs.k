@@ -9,10 +9,10 @@ module ERL-BIFS
   imports ERL-HELPERS
 
   rule <k> is_atom(A:Atom) => true ... </k>
-       <trace> ... "is_atom" |-> (V => V +Int 1) ... </trace>
+       //<trace> ... "is_atom" |-> (V => V +Int 1) ... </trace>
 
   rule <k> is_atom(V:Value) => false ... </k>
-       <trace> ... "is_atom" |-> (V' => V' +Int 1) ... </trace> 
+       //<trace> ... "is_atom" |-> (V' => V' +Int 1) ... </trace> 
     requires notBool (isAtom(V))
 
 //  rule <k> is_atom( %Exc V ) => %Exc V </k>
@@ -21,28 +21,28 @@ module ERL-BIFS
 
 
   rule <k> is_boolean(true) => true ... </k>
-       <trace> ... "is_boolean" |-> (V => V +Int 1) ... </trace>
+       //<trace> ... "is_boolean" |-> (V => V +Int 1) ... </trace>
 
   rule <k> is_boolean(false) => true ... </k>
-       <trace> ... "is_boolean" |-> (V => V +Int 1) ... </trace>
+       //<trace> ... "is_boolean" |-> (V => V +Int 1) ... </trace>
 
   rule <k> is_boolean(V:Value) => false ... </k>
-       <trace> ... "is_boolean" |-> (V' => V' +Int 1) ... </trace>
+       //<trace> ... "is_boolean" |-> (V' => V' +Int 1) ... </trace>
     requires V =/=K true andBool V =/=K false
 
 //  rule <k> is_boolean(E:Exception) => true </k>
 //       <trace> ... "is_boolean" |-> (V => V +Int 1) ... </trace>
 
   rule <k> is_integer(I:Int) => true ... </k>
-       <trace> ... "is_integer" |-> (V' => V' +Int 1) ... </trace>
+       //<trace> ... "is_integer" |-> (V' => V' +Int 1) ... </trace>
   rule <k> is_integer(V:Value) => false ... </k>
-       <trace> ... "is_integer" |-> (V' => V' +Int 1) ... </trace>
+       //<trace> ... "is_integer" |-> (V' => V' +Int 1) ... </trace>
     requires notBool (isInt(V)) 
 
   rule <k> is_number(I:Int) => true ... </k>
-       <trace> ... "is_number" |-> (V' => V' +Int 1) ... </trace>
+       //<trace> ... "is_number" |-> (V' => V' +Int 1) ... </trace>
   rule <k> is_number(V:Value) => false ... </k>
-       <trace> ... "is_number" |-> (V' => V' +Int 1) ... </trace>
+       //<trace> ... "is_number" |-> (V' => V' +Int 1) ... </trace>
     requires notBool (isInt(V))
 
   rule <k> hd([V:Value, (.Exps) | _]) => V ... </k>

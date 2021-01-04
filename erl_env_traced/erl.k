@@ -322,7 +322,7 @@ module ERL
        </k>
        <env> Env => .Map </env>
        <currentMod> CurrentMod => M </currentMod>
-       <trace> ... "fa_import_call" |-> (V' => V' +Int 1) ... </trace>
+       // <trace> ... "fa_import_call" |-> (V' => V' +Int 1) ... </trace>
        <mods> ...
          <mod>
            ... 
@@ -346,7 +346,7 @@ module ERL
        </k>
        <env> Env => .Map </env>
        <currentMod> CurrentMod => M </currentMod>
-       <trace> ... "mfa_call" |-> (V' => V' +Int 1) ... </trace> 
+       // <trace> ... "mfa_call" |-> (V' => V' +Int 1) ... </trace> 
        <mods> ...
          <mod>
            ... 
@@ -386,6 +386,25 @@ module ERL
   rule <k> fun Name:Atom/Arity:Int(Args) =>
        fun(genArgs(Arity)) -> Name(genArgs(Arity)) end(Args) ... </k>
        <trace> ... "implicit_call" |-> (V' => V' +Int 1) ... </trace> [structural]
+
+
+  rule <k>F:Value(A:Values) => %badfun ...</k>
+       <env> Env => .Map </env>
+       <trace> ... "fa_call_badfun" |-> (V' => V' +Int 1) ... </trace> 
+       <currentMod> CurrentMod </currentMod>
+       
+       <mods> ...
+         <mod>
+           ...
+           <modname> CurrentMod </modname>
+           ...
+         </mod> ...
+       </mods>
+      requires notBool isAtom(F)  [owise]
+
+  rule <k> F:Atom(Vs:Values) => %undef ... </k>
+       <trace> ... "fa_call_undef" |-> (V' => V' +Int 1) ... </trace>  
+     requires (notBool isBIF(F)) [owise]
 
 // -----------------------------------------------------------------------------
 // If expression
