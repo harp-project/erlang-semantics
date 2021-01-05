@@ -84,9 +84,9 @@ module ERL-CONFIGURATION
                    // "mfa_call" |-> 0
                    // "fa_import_call" |-> 0
                     "fa_local_call" |-> 0
-                    "fa_call_undef" |-> 0
+                   // "fa_call_undef" |-> 0
                     "fa_call_badfun" |-> 0
-                    "fa_call_badarity" |-> 0
+                   // "fa_call_badarity" |-> 0
                     "if" |-> 0
                     "case" |-> 0
                     "match" |-> 0

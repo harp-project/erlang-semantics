@@ -396,7 +396,7 @@ module ERL
   rule <k>F:Atom(A:Values) => %badarity ...</k>
        <env> Env => .Map </env>
        <currentMod> CurrentMod </currentMod>
-       <trace> ... "fa_call_badarity" |-> (V' => V' +Int 1) ... </trace> 
+       // <trace> ... "fa_call_badarity" |-> (V' => V' +Int 1) ... </trace> 
        <funnames> (S:Set) SetItem(F) </funnames>
        <mods> ...
          <mod>
@@ -422,7 +422,7 @@ module ERL
       requires notBool isAtom(F)  [owise]
 
   rule <k> F:Atom(Vs:Values) => %undef ... </k>
-       <trace> ... "fa_call_undef" |-> (V' => V' +Int 1) ... </trace>  
+     // <trace> ... "fa_call_undef" |-> (V' => V' +Int 1) ... </trace>  
      requires (notBool isBIF(F)) [owise]
 
 // -----------------------------------------------------------------------------
