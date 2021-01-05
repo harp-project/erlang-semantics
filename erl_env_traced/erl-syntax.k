@@ -59,10 +59,10 @@ module ERL-SYNTAX
                | Exp "==" Exp                 [strict, arith]
                | Exp "/=" Exp                 [strict, arith]
                > left:
-                 Exp "andalso" Exp            [strict(1), arith] //it is non-assoc in the manual
+                 Exp "andalso" Exp            [strict(1), arith, prefer] //it is non-assoc in the manual
                | Exp "and" Exp                [seqstrict, arith]
                > Exp "or" Exp                 [seqstrict, arith]
-               | Exp "orelse" Exp             [strict(1), arith] //it is non-assoc in the manual
+               | Exp "orelse" Exp             [strict(1), arith, prefer] //it is non-assoc in the manual
 
   syntax Exp ::= "{" Exps "}"                 [strict,    tuple]
                | "[" Exps "]"                 [strict,    list]
