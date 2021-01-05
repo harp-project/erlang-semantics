@@ -362,7 +362,12 @@ module ERL
           matchesFunAndRestore({Args}, getMatchFromFun(Cls), Env) ...</k>
        <env> Env </env>   
        <trace> ... "anon_call" |-> (V' => V' +Int 1) ... </trace> 
-       requires notBool (isNamedFun(fun Cls:Clauses end))
+       requires (notBool (isNamedFun(fun Cls:Clauses end))) andBool (%count(Args) ==Int %clauseVars(Cls))
+
+  rule <k>(fun Cls:Clauses end)(Args) => %badarity ...</k>
+       <env> Env </env>   
+       <trace> ... "anon_call_badarity" |-> (V' => V' +Int 1) ... </trace> 
+       requires (notBool (isNamedFun(fun Cls:Clauses end))) andBool (notBool %count(Args) ==Int %clauseVars(Cls))
 
 // Call to an anonymous function with a variable as "name"
   rule <k>(fun Cls:Clauses end)(Args) =>
@@ -371,7 +376,7 @@ module ERL
        <trace> ... "anon_call_var" |-> (V' => V' +Int 1) ... </trace> 
        <funVars> FunVars => updateMap(FunVars, getNewFunvar(fun Cls:Clauses end)) </funVars>
        <funEnv> FunEnv => FunEnv getFunvar(fun Cls:Clauses end) |-> Env</funEnv>
-       requires (isNamedFun(fun Cls:Clauses end)) andBool (notBool (getFunvar(fun Cls:Clauses end) in keys(FunVars)))
+       requires (isNamedFun(fun Cls:Clauses end)) andBool (notBool (getFunvar(fun Cls:Clauses end) in keys(FunVars)))  andBool (%count(Args) ==Int %clauseVars(Cls))
 
 // Recursive call to a "named" anonymous function
   rule <k> (fun Cls:Clauses end)(Args) =>
@@ -380,13 +385,27 @@ module ERL
        <trace> ... "recursive_call" |-> (V' => V' +Int 1) ... </trace> 
        <funVars> FunVars </funVars>
        <funEnv> ... getFunvar(fun Cls:Clauses end) |-> FunEnv ... </funEnv>
-       requires (isNamedFun(fun Cls:Clauses end)) andBool (getFunvar(fun Cls:Clauses end) in keys(FunVars))
+       requires (isNamedFun(fun Cls:Clauses end)) andBool (getFunvar(fun Cls:Clauses end) in keys(FunVars)) andBool (%count(Args) ==Int %clauseVars(Cls))
 
 // Call to an implicit fun
   rule <k> fun Name:Atom/Arity:Int(Args) =>
        fun(genArgs(Arity)) -> Name(genArgs(Arity)) end(Args) ... </k>
        <trace> ... "implicit_call" |-> (V' => V' +Int 1) ... </trace> [structural]
 
+// Call exceptions
+  rule <k>F:Atom(A:Values) => %badarity ...</k>
+       <env> Env => .Map </env>
+       <currentMod> CurrentMod </currentMod>
+       <trace> ... "fa_call_badarity" |-> (V' => V' +Int 1) ... </trace> 
+       <funnames> (S:Set) SetItem(F) </funnames>
+       <mods> ...
+         <mod>
+           ...
+           <modname> CurrentMod </modname>
+           ...
+         </mod> ...
+       </mods>
+      requires notBool isBIF(F)   [owise]
 
   rule <k>F:Value(A:Values) => %badfun ...</k>
        <env> Env => .Map </env>
@@ -495,5 +514,9 @@ module ERL
   rule genArgs(0) => .Exps
   rule genArgs(N) => (#parseToken("Variable", "Arg" +String Int2String(N))), genArgs(N -Int 1)
       requires N >Int 0
+
+  syntax Int ::= "%clauseVars(" Clauses ")"  [function]
+  rule %clauseVars((Es) -> _; _) => %count(Es)
+  rule %clauseVars(_(Es) -> _; _) => %count(Es) 
 
 endmodule

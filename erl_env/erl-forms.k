@@ -59,6 +59,7 @@ module ERL-FORMS
 
   rule <k>Name:Atom(Args) -> Body . =>. ...</k>
        <currentMod> ModName </currentMod>
+       <funnames> OldFnames:Set => OldFnames SetItem(Name) </funnames>
        <mods> ...
          <mod>
            ...
@@ -70,6 +71,7 @@ module ERL-FORMS
 
   rule <k>Name:Atom(Args) -> Body ; =>. ...</k>
        <currentMod> ModName </currentMod>
+       <funnames> OldFnames:Set => OldFnames SetItem(Name) </funnames>
        <mods> ...
          <mod>
            ...
@@ -81,6 +83,7 @@ module ERL-FORMS
 
   rule <k>Name:Atom(Args) -> Body . =>. ...</k>
        <currentMod> ModName </currentMod>
+       <funnames> OldFnames:Set => OldFnames SetItem(Name) </funnames>
        <mods> ...
          <mod>
            ...
@@ -93,6 +96,7 @@ module ERL-FORMS
 
   rule <k>Name:Atom(Args) -> Body ; =>. ...</k>
        <currentMod> ModName </currentMod>
+       <funnames> OldFnames:Set => OldFnames SetItem(Name) </funnames>
        <mods> ...
          <mod>
            ...

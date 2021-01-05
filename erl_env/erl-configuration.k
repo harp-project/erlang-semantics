@@ -18,6 +18,7 @@ module ERL-CONFIGURATION
                   <funEnv> .Map </funEnv>
                   <sideEffects> .List </sideEffects>
                   <currentMod> main </currentMod>
+                  <funnames> .Set </funnames>
                   <mods>
                       <mod multiplicity="*">
                               <modname> .K </modname>

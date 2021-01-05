@@ -79,12 +79,14 @@ module ERL-CONFIGURATION
                     "implicit_call" |-> 0
                     "recursive_call" |-> 0
                     "anon_call" |-> 0
+                    "anon_call_badarity" |-> 0
                     "anon_call_var" |-> 0
                    // "mfa_call" |-> 0
                    // "fa_import_call" |-> 0
                     "fa_local_call" |-> 0
                     "fa_call_undef" |-> 0
                     "fa_call_badfun" |-> 0
+                    "fa_call_badarity" |-> 0
                     "if" |-> 0
                     "case" |-> 0
                     "match" |-> 0
@@ -92,6 +94,7 @@ module ERL-CONFIGURATION
                   </trace>
                   <sideEffects> .List </sideEffects>
                   <currentMod> main </currentMod>
+                  <funnames> .Set </funnames>
                   <mods>
                       <mod multiplicity="*">
                               <modname> .K </modname>
