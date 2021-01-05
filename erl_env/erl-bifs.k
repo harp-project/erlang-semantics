@@ -34,17 +34,19 @@ module ERL-BIFS
   rule length(_:Value) => %badarg  [owise]
 
   rule element(I:Int, ({E, Es}):Value) => E requires I ==K 1
-  rule element(I:Int, ({E, Es}):Value) => element(I -Int 1, {Es}) requires I =/=K 1
+  rule element(I:Int, ({E, Es}):Value) => element(I -Int 1, {Es}) requires I >Int 1
   rule element(_:Value, _:Value) => %badarg  [owise]
 
-  rule setelement(I:Int, ({Es}):Value, V:Value) => {setelement2(I, Es, V)}
+  rule setelement(I:Int, ({Es}):Value, V:Value) => {setelement2(I, Es, V)} requires I >Int 0
   rule setelement(_:Value, _:Value, _:Value) => %badarg  [owise]
 
   syntax Exps ::= setelement2(Int, Exps, Value)
   rule setelement2(1, (E,Es), V) => V, Es
   rule setelement2(I, (E,Es), V) => E, setelement2(I -Int 1, Es, V)
+  rule setelement2(I, .Exps, V) => %badarg
 
   rule tuple_size({Exps}) => %count(Exps)
+  rule tuple_size(_:Value) => %badarg   [owise]
 
   syntax Exps ::= "#ErlListToKList" "(" Exp ")" [strict]
   rule #ErlListToKList( [ .Exps ] ) => .Exps

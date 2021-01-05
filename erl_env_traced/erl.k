@@ -241,7 +241,7 @@ module ERL
 
   rule <k> [.Values] -- [.Values] => [.Values] ... </k>
        <trace> ... "diff" |-> (V' => V' +Int 1) ... </trace> 
-  rule <k> [.Values] -- [_ | _] => [.Values] ... </k>
+  rule <k> [.Values] -- [_:Values | _:Value] => [.Values] ... </k>
        <trace> ... "diff" |-> (V' => V' +Int 1) ... </trace> 
   rule <k> [E1 | E1s] -- [E2 | Es2] => %removeElement(E2, [E1 | E1s]) -- Es2 ... </k>
        <trace> ... "diff" |-> (V' => V' +Int 1) ... </trace> 

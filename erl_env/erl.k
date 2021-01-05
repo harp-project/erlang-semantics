@@ -172,7 +172,7 @@ module ERL
   rule <k> _:Value ++ _ => %badarg ... </k> [owise]
 
   rule [.Values] -- [.Values] => [.Values]
-  rule [.Values] -- [_ | _] => [.Values]
+  rule [.Values] -- [_:Values | _:Value] => [.Values]
   rule [E1 | E1s] -- [E2 | Es2] => %removeElement(E2, [E1 | E1s]) -- Es2
   rule [E1 | E1s] -- [.Values] => [E1 | E1s]
   rule _:Value -- _:Value => %badarg  [owise]

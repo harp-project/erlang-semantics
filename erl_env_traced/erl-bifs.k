@@ -70,13 +70,13 @@ module ERL-BIFS
 
   rule <k> element(I:Int, ({E, Es}):Value) => element(I -Int 1, {Es}) ... </k>
        <trace> ... "element" |-> (V' => V' +Int 1) ... </trace>
-    requires I =/=K 1
+    requires I >Int 1
   
   rule <k> element(_:Value, _:Value) => %badarg ... </k>
        <trace> ... "element_ex" |-> (V' => V' +Int 1) ... </trace> [owise]
 
   rule <k> setelement(I:Int, ({Es}):Value, V:Value) => {setelement2(I, Es, V)} ... </k>
-       <trace> ... "setelement" |-> (V' => V' +Int 1) ... </trace>
+       <trace> ... "setelement" |-> (V' => V' +Int 1) ... </trace>  requires I >Int 0
 
   rule <k> setelement(_:Value, _:Value, _:Value) => %badarg ... </k>
        <trace> ... "setelement_ex" |-> (V' => V' +Int 1) ... </trace> [owise]
@@ -84,11 +84,12 @@ module ERL-BIFS
   syntax Exps ::= setelement2(Int, Exps, Value)
   rule setelement2(1, (E,Es), V) => V, Es
   rule setelement2(I, (E,Es), V) => E, setelement2(I -Int 1, Es, V)
+  rule setelement2(I, .Exps, V) => %badarg
 
   rule <k> tuple_size({Exps}) => %count(Exps) ... </k>
        <trace> ... "tuple_size" |-> (V' => V' +Int 1) ... </trace>
   
-  rule <k> tuple_size({Exps}) => %badarg... </k>
+  rule <k> tuple_size(_:Value) => %badarg ... </k>
        <trace> ... "tuple_size_ex" |-> (V' => V' +Int 1) ... </trace> [owise]
 
   syntax Exps ::= "#ErlListToKList" "(" Exp ")" [strict]
