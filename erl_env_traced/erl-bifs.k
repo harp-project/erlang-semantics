@@ -50,13 +50,19 @@ module ERL-BIFS
 
   rule <k> tl([_ | Xs:Value]) => Xs ... </k>
        <trace> ... "tl" |-> (V' => V' +Int 1) ... </trace>
+  
+  rule <k> hd(_:Value) => %badarg ... </k>
+       <trace> ... "hd_ex" |-> (V' => V' +Int 1) ... </trace> [owise]
+
+  rule <k> tl(_:Value) => %badarg ... </k>
+       <trace> ... "tl_ex" |-> (V' => V' +Int 1) ... </trace> [owise]
 
   rule <k> length([(.Exps)]) => 0 ... </k>
        <trace> ... "length" |-> (V' => V' +Int 1) ... </trace>
   rule <k> length([V:Value, (.Exps) | Vs]) => 1 + length(Vs) ... </k>
        <trace> ... "length" |-> (V' => V' +Int 1) ... </trace>
-  // rule length( [Es:Exps] ) => length( [Es | [.Exps]] ) requires Es =/=K .Exps     // List normalisation
-  // rule length( [E:Exp,Es | T] ) => length( [E | [Es|T]] ) requires Es =/=K .Exps  // List normalisation
+  rule <k> length(_:Value) => %badarg ... </k>
+       <trace> ... "length_ex" |-> (V' => V' +Int 1) ... </trace> [owise]
 
   rule <k> element(I:Int, ({E, Es}):Value) => E ... </k>
        <trace> ... "element" |-> (V' => V' +Int 1) ... </trace>
@@ -65,9 +71,15 @@ module ERL-BIFS
   rule <k> element(I:Int, ({E, Es}):Value) => element(I -Int 1, {Es}) ... </k>
        <trace> ... "element" |-> (V' => V' +Int 1) ... </trace>
     requires I =/=K 1
+  
+  rule <k> element(_:Value, _:Value) => %badarg ... </k>
+       <trace> ... "element_ex" |-> (V' => V' +Int 1) ... </trace> [owise]
 
   rule <k> setelement(I:Int, ({Es}):Value, V:Value) => {setelement2(I, Es, V)} ... </k>
        <trace> ... "setelement" |-> (V' => V' +Int 1) ... </trace>
+
+  rule <k> setelement(_:Value, _:Value, _:Value) => %badarg ... </k>
+       <trace> ... "setelement_ex" |-> (V' => V' +Int 1) ... </trace> [owise]
 
   syntax Exps ::= setelement2(Int, Exps, Value)
   rule setelement2(1, (E,Es), V) => V, Es
@@ -75,18 +87,27 @@ module ERL-BIFS
 
   rule <k> tuple_size({Exps}) => %count(Exps) ... </k>
        <trace> ... "tuple_size" |-> (V' => V' +Int 1) ... </trace>
+  
+  rule <k> tuple_size({Exps}) => %badarg... </k>
+       <trace> ... "tuple_size_ex" |-> (V' => V' +Int 1) ... </trace> [owise]
 
   syntax Exps ::= "#ErlListToKList" "(" Exp ")" [strict]
   rule #ErlListToKList( [ .Exps ] ) => .Exps
   rule #ErlListToKList( [ H, (.Exps) | T ] ) => H, #ErlListToKList( T )
-  rule <k> list_to_tuple(L) => { #ErlListToKList(L) } ... </k>
+  rule <k> list_to_tuple([L1 | L2]) => { #ErlListToKList([L1 | L2]) } ... </k>
        <trace> ... "list_to_tuple" |-> (V' => V' +Int 1) ... </trace>
+  rule <k> list_to_tuple([.Exps]) => { .Exps } ... </k>
+       <trace> ... "list_to_tuple" |-> (V' => V' +Int 1) ... </trace>
+  rule <k> list_to_tuple(_:Value) => %badarg ... </k>
+       <trace> ... "list_to_tuple_ex" |-> (V' => V' +Int 1) ... </trace>  [owise]
 
   syntax Exp ::= "#KListToErlList" "(" Exps ")" [strict]
   rule #KListToErlList( .Exps ) => [.Exps]
   rule #KListToErlList( E:Exp, Es:Exps ) => [ E | #KListToErlList( Es ) ]
   rule <k> tuple_to_list({ Es }) => #KListToErlList(Es) ...</k>
-       <trace> ... "tuple_to_list" |-> (V' => V' +Int 1) ... </trace> 
+       <trace> ... "tuple_to_list" |-> (V' => V' +Int 1) ... </trace>
+  rule <k> tuple_to_list(_:Value) => %badarg ...</k>
+       <trace> ... "tuple_to_list_ex" |-> (V' => V' +Int 1) ... </trace> [owise]
   
   /* rule <k> tuple_to_list({ Es }) => [ Es ] ... </k>     // After using this rule, list normalisation does not apply
        <trace> ... "tuple_to_list" |-> (V' => V' +Int 1) ... </trace> */

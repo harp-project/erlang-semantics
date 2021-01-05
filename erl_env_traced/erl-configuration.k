@@ -32,6 +32,15 @@ module ERL-CONFIGURATION
                     "tuple_to_list" |-> 0
                     "length" |-> 0
 
+                    "hd_ex" |-> 0
+                    "tl_ex" |-> 0
+                    "element_ex" |-> 0
+                    "setelement_ex" |-> 0
+                    "tuple_size_ex" |-> 0
+                    "list_to_tuple_ex" |-> 0
+                    "tuple_to_list_ex" |-> 0
+                    "length_ex" |-> 0
+
                     // Matching
                     "matches_and_restore" |-> 0
                     "matches_fun_and_restore" |-> 0
@@ -56,13 +65,13 @@ module ERL-CONFIGURATION
                     "lt_list" |-> 0
                     "ge" |-> 0
                     "gt" |-> 0
-                    "or" |-> 0
-                    "or_ex" |-> 0
                     "eq" |-> 0
                     "neq" |-> 0
 
                     "and" |-> 0
                     "and_ex" |-> 0
+                    "or" |-> 0
+                    "or_ex" |-> 0
                     "andalso" |-> 0
                     "andalso_ex" |-> 0
                     "orelse" |-> 0
