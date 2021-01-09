@@ -8,15 +8,14 @@ module ERL-BIFS
   imports ERL-CONFIGURATION
   imports ERL-HELPERS
 
+
+  // TODO: uncomment after implementing the generation of the following expressions (calls)
   rule <k> is_atom(A:Atom) => true ... </k>
        //<trace> ... "is_atom" |-> (V => V +Int 1) ... </trace>
 
   rule <k> is_atom(V:Value) => false ... </k>
        //<trace> ... "is_atom" |-> (V' => V' +Int 1) ... </trace> 
     requires notBool (isAtom(V))
-
-//  rule <k> is_atom( %Exc V ) => %Exc V </k>
-//       <trace> ... "is_atom_ex" |-> (V => V +Int 1) ... </trace>
 
 
 
@@ -29,9 +28,6 @@ module ERL-BIFS
   rule <k> is_boolean(V:Value) => false ... </k>
        //<trace> ... "is_boolean" |-> (V' => V' +Int 1) ... </trace>
     requires V =/=K true andBool V =/=K false
-
-//  rule <k> is_boolean(E:Exception) => true </k>
-//       <trace> ... "is_boolean" |-> (V => V +Int 1) ... </trace>
 
   rule <k> is_integer(I:Int) => true ... </k>
        //<trace> ... "is_integer" |-> (V' => V' +Int 1) ... </trace>
@@ -109,9 +105,6 @@ module ERL-BIFS
        <trace> ... "tuple_to_list" |-> (V' => V' +Int 1) ... </trace>
   rule <k> tuple_to_list(_:Value) => %badarg ...</k>
        <trace> ... "tuple_to_list_ex" |-> (V' => V' +Int 1) ... </trace> [owise]
-  
-  /* rule <k> tuple_to_list({ Es }) => [ Es ] ... </k>     // After using this rule, list normalisation does not apply
-       <trace> ... "tuple_to_list" |-> (V' => V' +Int 1) ... </trace> */
   
 
 endmodule

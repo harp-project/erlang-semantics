@@ -10,7 +10,6 @@ module ERL-MATCHING
 
   // The resulted map of getMatching function contains this key
   // when the maching is unsuccesful.
-  // syntax Atom ::= "%badmatch" [token]
 
   syntax Exp ::= matches(Value, Match)
   syntax Exp ::= matchesFun(Value, Match)

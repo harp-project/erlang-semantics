@@ -51,8 +51,6 @@ module ERL
 // -----------------------------------------------------------------------------
 // Arithmetic operators
 
-  // syntax Atom ::= "%badarith" [token]
-
   rule I1 *   I2 => I1 *Int I2
   rule I1 div I2 => I1 /Int I2 requires I2 =/=Int 0
   rule I1 div I2 => %badarith requires I2 ==Int 0
@@ -138,8 +136,6 @@ module ERL
 
 // -----------------------------------------------------------------------------
 // Short-circuit logic operations
-
-  // syntax Atom ::= "%badarg" [token]
 
   rule V1:Value and V2:Value => %badarg
     requires (V1 =/=K true andBool V1 =/=K false)
@@ -354,8 +350,6 @@ module ERL
 // Begin - end
 
   //So far, we are only able to write expression sequence in a begin-end block
-
-  // rule E, .Exps => E // TODO / BEWARE / CAUTION / this may be too permissive
 
   rule begin E, Es end => E
       requires Es ==K .Exps

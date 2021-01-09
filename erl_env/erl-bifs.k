@@ -63,7 +63,5 @@ module ERL-BIFS
   rule tuple_to_list({ Es }) => #KListToErlList (Es)
   rule tuple_to_list(_:Value) => %badarg  [owise]
   
-  // rule tuple_to_list({ Es }) => [ Es ]      // After using this rule, list normalisation does not apply
-  
 
 endmodule

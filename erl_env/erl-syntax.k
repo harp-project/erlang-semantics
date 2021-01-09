@@ -45,9 +45,11 @@ module ERL-SYNTAX
                  Exp "*" Exp                  [strict, arith]
                | Exp "div" Exp                [strict, arith]
                | Exp "rem" Exp                [strict, arith]
+               | Exp "and" Exp                [seqstrict, arith, avoid]
                > left:
                  Exp "+" Exp                  [strict, arith]
                | Exp "-" Exp                  [strict, arith]
+               | Exp "or" Exp                 [seqstrict, arith, avoid]
                > right:
                  Exp "++" Exp                 [strict, arith]
                | Exp "--" Exp                 [strict, arith]
@@ -60,9 +62,8 @@ module ERL-SYNTAX
                | Exp "/=" Exp                 [strict, arith]
                > left:
                  Exp "andalso" Exp            [strict(1), arith, prefer] //it is non-assoc in the manual
-               | Exp "and" Exp                [seqstrict, arith]
-               > Exp "or" Exp                 [seqstrict, arith]
-               | Exp "orelse" Exp             [strict(1), arith, prefer] //it is non-assoc in the manual
+               > left:
+                 Exp "orelse" Exp             [strict(1), arith, prefer] //it is non-assoc in the manual
 
   syntax Exp ::= "{" Exps "}"                 [strict,    tuple]
                | "[" Exps "]"                 [strict,    list]

@@ -11,9 +11,6 @@ module ERL-HELPERS
   rule %count(.Exps) => 0
   rule %count(X:Exp,Xs:Exps) => ((%count(Xs)) +Int 1)
 
-  syntax Variable ::= parseVar(String) [function]
-  rule parseVar(Str) => #parseToken("Variable", Str)
-
   syntax Set ::= fv(Exp) [function]
   rule fv(V:Variable) => SetItem(V)
   rule fv([H | T]) => fvs(H) fv(T)

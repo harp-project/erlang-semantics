@@ -53,8 +53,6 @@ module ERL
 // -----------------------------------------------------------------------------
 // Arithmetic operators
 
-  // syntax Exception ::= %Exc "badarith" [token]
-
   rule <k> I1 *   I2 => I1 *Int I2 ... </k>
        <trace> ... "mult" |-> (V' => V' +Int 1) ... </trace>
   rule <k> I1 div I2 => I1 /Int I2 ... </k>
@@ -187,8 +185,6 @@ module ERL
 
 // -----------------------------------------------------------------------------
 // Short-circuit logic operations
-
-  // syntax Atom ::= "badarg" [token]
 
   rule <k> V1:Value and V2:Value => %badarg ... </k>
        <trace> ... "and_ex" |-> (V' => V' +Int 1) ... </trace>
@@ -447,8 +443,6 @@ module ERL
 // Begin - end
 
   //So far, we are only able to write expression sequence in a begin-end block
-
-  // rule E, .Exps => E // TODO / BEWARE / CAUTION / this may be too permissive
 
   rule <k> begin E, Es end => E ... </k>
        <trace> ... "begin_end" |-> (V' => V' +Int 1) ... </trace> 

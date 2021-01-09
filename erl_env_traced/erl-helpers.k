@@ -6,17 +6,10 @@ module ERL-HELPERS
   imports ERL-SYNTAX
   imports ERL-CONFIGURATION
 
-  /* NOTE: These functions cannot be traced, because they are used in several different configuration cells */
   // Returns the length of the expression list
   syntax Int ::= "%count" "(" Exps ")"  [function]
   rule %count(.Exps) => 0
   rule %count(X:Exp,Xs:Exps) => ((%count(Xs)) +Int 1)
-
-  /* 
-  This was not used anywhere
-
-  syntax Variable ::= parseVar(String) [function]
-  rule parseVar(Str) => #parseToken("Variable", Str) */
 
   syntax Set ::= fv(Exp) [function]
   rule fv(V:Variable) => SetItem(V)
@@ -27,8 +20,6 @@ module ERL-HELPERS
   syntax Set ::= fvs(Exps) [function]
   rule fvs(E:Exp, Es:Exps) => fv(E) fvs(Es)
   rule fvs(.Exps)  => .Set
-
-  /* **************************************************************************************************** */
 
   syntax RestoreEnv ::= restoreEnv(Map)
   syntax Exp ::= RestoreEnv
