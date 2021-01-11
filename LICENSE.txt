@@ -1,0 +1,5 @@
+Erlang semantics
+Copyright (c) High-Assurance Refactoring Project, Eötvös Loránd University
+
+This program is licensed under LGPLv3 license.
+See the files COPYING and COPYING.LESSER for details.
