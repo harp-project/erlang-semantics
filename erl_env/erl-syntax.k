@@ -29,8 +29,8 @@ module ERL-SYNTAX
 
   syntax Joker ::= "_" [notInRules, token, joker]
 
-  syntax Variable ::= Token{[A-Z][\_a-zA-Z0-9\@]*}
-         [notInRules, autoReject, token, regex([A-Z][\_a-zA-Z0-9\@]*)]
+  syntax Variable ::= Token{[\_A-Z][\_a-zA-Z0-9\@]*}
+         [notInRules, autoReject, token, regex([\_A-Z][\_a-zA-Z0-9\@]*)]
 
   syntax Variable ::= Joker
 
