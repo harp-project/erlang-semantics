@@ -8,6 +8,9 @@ module ERL-BIFS
   imports ERL-CONFIGURATION
   imports ERL-HELPERS
 
+  rule abs(I:Int) => absInt(I)
+  rule abs(_:Value) => %badarg   [owise]
+
   rule is_atom(A:Atom) => true
   rule is_atom(V:Value) => false requires notBool (isAtom(V))
 

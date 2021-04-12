@@ -20,7 +20,7 @@ module ERL-SYNTAX
 
   syntax Atom ::= UnquotedAtom | QuotedAtom | Bool
 
-  syntax BIF ::= "is_atom" | "is_boolean" | "is_integer" | "is_number" |
+  syntax BIF ::= "is_atom" | "is_boolean" | "is_integer" | "is_number" | "abs" |
               // "is_function" | "is_list" | "is_tuple" | TODO
                  "hd" | "tl" | "length" |
                  "element" | "setelement" | "tuple_size" |
