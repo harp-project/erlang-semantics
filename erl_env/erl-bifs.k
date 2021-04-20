@@ -48,7 +48,7 @@ module ERL-BIFS
   rule setelement2(I, (E,Es), V) => E, setelement2(I -Int 1, Es, V)
   rule setelement2(I, .Exps, V) => %badarg
 
-  rule tuple_size({Exps}) => %count(Exps)
+  rule tuple_size({Exps:Values}) => %count(Exps)
   rule tuple_size(_:Value) => %badarg   [owise]
 
   syntax Exps ::= "#ErlListToKList" "(" Exp ")" [strict]

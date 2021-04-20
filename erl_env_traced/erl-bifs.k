@@ -85,7 +85,7 @@ module ERL-BIFS
   rule setelement2(I, (E,Es), V) => E, setelement2(I -Int 1, Es, V)
   rule setelement2(I, .Exps, V) => %badarg
 
-  rule <k> tuple_size({Exps}) => %count(Exps) ... </k>
+  rule <k> tuple_size({Exps:Values}) => %count(Exps) ... </k>
        <trace> ... "tuple_size" |-> (V' => V' +Int 1) ... </trace>
   
   rule <k> tuple_size(_:Value) => %badarg ... </k>
