@@ -20,7 +20,7 @@ module ERL-FORMS
   rule <k> -module(ModName:Atom). => . ... </k>
        <currentMod> _ => ModName </currentMod>
        <mods> ...
-         (. => <mod>
+         (.Bag => <mod>
            <modname> ModName </modname>
            <exports> .Set </exports>
            <imports> .Set </imports>
@@ -58,36 +58,33 @@ module ERL-FORMS
   // Processing function definitions
 
   rule <k>Name:Atom(Args) -> Body . =>. ...</k>
-       <currentMod> ModName </currentMod>
        <funnames> OldFnames:Set => OldFnames SetItem(Name) </funnames>
        <mods> ...
          <mod>
            ...
-           <fundefs>Rho:Map (.Map => {Name,arity(Args)} |-> ListItem(({Args} -> begin Body end):Match0)) </fundefs>
+           <fundefs>Rho:Map (.Map => {Name,arity(Args)}:Value |-> ListItem(({Args} -> begin Body end):Match0)) </fundefs>
            ...
          </mod> ...
-       </mods> requires notBool {Name,arity(Args)} in keys(Rho)
+       </mods> requires notBool {Name,arity(Args)}:Value in keys(Rho)
      [structural]
 
   rule <k>Name:Atom(Args) -> Body ; =>. ...</k>
-       <currentMod> ModName </currentMod>
        <funnames> OldFnames:Set => OldFnames SetItem(Name) </funnames>
        <mods> ...
          <mod>
            ...
-           <fundefs>Rho:Map (.Map => {Name,arity(Args)} |-> ListItem(({Args} -> begin Body end):Match0)) </fundefs>
+           <fundefs>Rho:Map (.Map => {Name,arity(Args)}:Value |-> ListItem(({Args} -> begin Body end):Match0)) </fundefs>
            ...
          </mod> ...
-       </mods> requires notBool {Name,arity(Args)} in keys(Rho)
+       </mods> requires notBool {Name,arity(Args)}:Value in keys(Rho)
      [structural]
 
   rule <k>Name:Atom(Args) -> Body . =>. ...</k>
-       <currentMod> ModName </currentMod>
        <funnames> OldFnames:Set => OldFnames SetItem(Name) </funnames>
        <mods> ...
          <mod>
            ...
-           <fundefs>... {Name,arity(Args)} |-> (Bodies =>
+           <fundefs>... {Name,arity(Args)}:Value |-> (Bodies =>
                                Bodies ListItem(({Args} -> begin Body end):Match0)) ...</fundefs>
            ...
          </mod> ...
@@ -95,12 +92,11 @@ module ERL-FORMS
      [structural]
 
   rule <k>Name:Atom(Args) -> Body ; =>. ...</k>
-       <currentMod> ModName </currentMod>
        <funnames> OldFnames:Set => OldFnames SetItem(Name) </funnames>
        <mods> ...
          <mod>
            ...
-           <fundefs>... {Name,arity(Args)} |-> (Bodies =>
+           <fundefs>... {Name,arity(Args)}:Value |-> (Bodies =>
                                Bodies ListItem(({Args} -> begin Body end):Match0)) ...</fundefs>
            ...
          </mod> ...
@@ -110,12 +106,12 @@ module ERL-FORMS
   // Helper functions
 
   syntax Set ::= toFATupleSet(NameArities) [function]
-  rule toFATupleSet(F:Atom/A:Int) => SetItem({F,A})
-  rule toFATupleSet(F:Atom/A:Int, FAs) => SetItem({F,A}) toFATupleSet(FAs)
+  rule toFATupleSet(F:Atom/A:Int) => SetItem({F,A}:Value)
+  rule toFATupleSet(F:Atom/A:Int, FAs) => SetItem({F,A}:Value) toFATupleSet(FAs)
 
   syntax Set ::= toMFATupleSet(Atom, NameArities) [function]
-  rule toMFATupleSet(M, F:Atom/A:Int) => SetItem({M,F,A})
-  rule toMFATupleSet(M, (F:Atom/A:Int, FAs)) => SetItem({M,F,A}) toMFATupleSet(M, FAs)
+  rule toMFATupleSet(M, F:Atom/A:Int) => SetItem({M,F,A}:Value)
+  rule toMFATupleSet(M, (F:Atom/A:Int, FAs)) => SetItem({M,F,A}:Value) toMFATupleSet(M, FAs)
 
   syntax Int ::= arity(Exps) [function]
   rule arity(Es) => %count(Es)

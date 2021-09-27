@@ -6,17 +6,23 @@
 */
 
 //@ \section{Syntax}
+//require "substitution.md"
 
 module ERL-SYNTAX
 
+  //imports SUBSTITUTION
+  imports INT-SYNTAX
+  imports BOOL
+  //imports DOMAINS
+  imports STRING
 //==============================================================================
 // Tokens
 
-  syntax UnquotedAtom ::= Token{[a-z][\_a-zA-Z0-9\@]*}
-         [notInRules, autoReject, token, regex([a-z][\_a-zA-Z0-9\@]*)]
+  syntax UnquotedAtom ::= r"[a-z][_a-zA-Z0-9@]*"
+         [token]
 
-  syntax QuotedAtom ::= Token{[\'][\_a-zA-Z0-9\@]*[\']}
-         [notInRules, autoReject, token, regex([\'][\_a-zA-Z0-9\@]*[\'])]
+  syntax QuotedAtom ::= r"'[_a-zA-Z0-9@]+'"
+         [token]
 
   syntax Atom ::= UnquotedAtom | QuotedAtom | Bool
 
@@ -27,13 +33,15 @@ module ERL-SYNTAX
                  "list_to_tuple" | "tuple_to_list" [token]
   syntax Atom ::= BIF
 
-  syntax Joker ::= "_" [notInRules, token, joker]
+  syntax Joker ::= "~" [notInRules, token, joker] //preprocess: '_'->'~'
 
-  syntax Variable ::= Token{[A-Z][\_a-zA-Z0-9\@]*}
-         [notInRules, autoReject, token, regex([A-Z][\_a-zA-Z0-9\@]*)]
-
+  syntax Variable ::= r"[A-Z][_a-zA-Z0-9@]*"
+          [token]
+  
+  syntax Variable ::= String2Variable(String) [function, functional, hook(STRING.string2token)]
+  rule String2Variable(S) => {S}:>Variable
   syntax Variable ::= Joker
-
+  
 //==============================================================================
 // Expressions
 
@@ -73,12 +81,12 @@ module ERL-SYNTAX
                | Exp ":" Exp "(" Exps ")"     [seqstrict, mfacall]
                | "case" Exp "of" Match "end"  [strict(1), case]
                | "if" IfBody "end"            [if]
-               | "begin" Exps "end"           [           block] //TODO: allow the "begin" - "end" be omitted in unambiguous context
+               | "begin" Exps "end"           [block] //TODO: allow the "begin" - "end" be omitted in unambiguous context
                | MatchExp
                | Fun
                > "(" Exp ")"                  [bracket]
 
-  syntax Exps ::= List{Exp, ","}              [strict]
+  syntax Exps ::= List{Exp, ","}              [seqstrict, klabel("ErlList")]
 
   syntax MatchExp ::= Exp "=" Exp             [strict(2), matchexpr]
   syntax Fun      ::= "fun" Clauses "end"     [fun]
@@ -101,7 +109,7 @@ module ERL-SYNTAX
   syntax Filter      ::= Exp
   syntax Generator   ::= Exp "<-" Exp
   syntax GF          ::= Filter | Generator
-  syntax GFs         ::= List{GF, ","}
+  syntax GFs         ::= List{GF, ","} [klabel("gfs")]
 
 //==============================================================================
 // Forms
@@ -109,9 +117,9 @@ module ERL-SYNTAX
 //----------------------------------------------------------------------------
 // Module Attributes
 
-  syntax ModuleAttrib ::= "-" "module" "(" Atom ")" "." [mattrib]
-  syntax ExportAttrib ::= "-" "export" "(" NameArityList ")" "."
-  syntax ImportAttrib ::= "-" "import" "(" Atom "," NameArityList ")" "."
+  syntax ModuleAttrib ::= "-module" "(" Atom ")" "." [mattrib]
+  syntax ExportAttrib ::= "-export" "(" NameArityList ")" "."
+  syntax ImportAttrib ::= "-import" "(" Atom "," NameArityList ")" "."
   // TODO other attribs
 
   syntax Attrib ::= ExportAttrib | ImportAttrib [attrib]
@@ -144,7 +152,7 @@ module ERL-SYNTAX
                      mattrib > attrib
                    > funcl1 > funcl0
                    > fun
-                   > mfacall
+                  // > mfacall
                    > funcall
                    > tuple
                    > listcomp
@@ -168,5 +176,21 @@ module ERL-SYNTAX
 
   syntax Variable ::= "Xx" | "Yy" | "Zz" | "Aa" | "Bb" | "Cc" | "Sum" | "Num" [token]
   syntax Atom     ::= "x" | "f" | "g" | "sum" | "rec" [token]      
- 
+
+//==============================================================================
+// Semantic Values
+
+  syntax BasicValue ::=  Atom | Int | Fun
+  syntax Value ::=  BasicValue | "{" Values "}" | "[" Values "|" Value "]" | "[" Values "]"
+  syntax Values ::= List{Value, ","} [klabel("ErlList")]
+  
+  syntax Exception ::= "%badarith" | "%badarg" | "%badmatch" | "%badarity" | "%badfun" | "%undef"
+  
+  syntax Exp ::= Value
+  syntax Exps ::= Values
+  
+  syntax KResult ::= Value
+  syntax KResult ::= Values
+
+
 endmodule

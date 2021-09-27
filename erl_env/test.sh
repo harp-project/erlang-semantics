@@ -32,7 +32,7 @@ do
   echo -n "  $(basename $f)..."
   echo "-module(tmp). -export([main/0]). " >> $TMPFILE
   cat $f >> $TMPFILE
-  KCELL=$(krun --config-var Exp="tmp:main(.Exps)" $TMPFILE | sed -n '3p' | grep -c "true")
+  KCELL=$(krun -cNAME="tmp:main()" $TMPFILE | sed -n '3p' | grep -c "true")
   if [ "$KCELL" -eq "1" ];  then
     echo "ok"
     OK=$((OK + 1))
@@ -69,7 +69,7 @@ for d in $DIRS
 do
   echo -n "  $(basename $d)..."
   find $d/* -maxdepth 0 -type f -name '*.erl' -exec cat {} + >> $TMPFILE
-  KCELL=$(krun --config-var Exp="main:main(.Exps)" $TMPFILE | sed -n '3p' | grep -c "true")
+  KCELL=$(krun -cNAME="tmp:main()" $TMPFILE | sed -n '3p' | grep -c "true")
   if [ "$KCELL" -eq "1" ];  then
     echo "ok"
     OK=$((OK + 1))
