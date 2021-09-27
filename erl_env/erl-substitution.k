@@ -10,12 +10,12 @@ module ERL-SUBSTITUTION
 
   syntax Exp ::= subst(Exp, Map) [function]
 
-  rule subst(A:Atom, Map) => A
-  rule subst(I:Int, Map) => I
+  rule subst(A:Atom, _) => A
+  rule subst(I:Int, _) => I
 
-  rule subst(J:Joker, Map) => J
+  rule subst(J:Joker, _) => J
   rule subst(V:Variable, Map) => V requires notBool (V in keys(Map))
-  rule subst(V:Variable, Map) => Map[V] requires (V in keys(Map))
+  rule subst(V:Variable, Map) => {Map[V]}:>Exp requires (V in keys(Map))
 
   rule subst(not E, Map) => not subst(E, Map)
 
@@ -39,11 +39,11 @@ module ERL-SUBSTITUTION
 
   rule subst({ Es }, Map) => { substAll(Es, Map) }
 
-  rule subst([Es], Map) => [Es] requires Es ==K .Exps
+  rule subst([Es:Exps], _) => [Es:Exps] requires Es ==K .Exps
   rule subst([Es | E], Map) => [ substAll(Es, Map) | subst(E, Map) ]
 
   rule subst(E:Exp(Es), Map) => subst(E, Map) ( substAll(Es, Map) )
-  rule subst((M:Exp):(E:Exp)(Es), Map) => subst(M, Map) : subst(E, Map) ( substAll(Es, Map) )
+  //rule subst((M:Exp):(E:Exp)(Es), Map) => subst(M, Map) : subst(E, Map) ( substAll(Es, Map) )
   rule subst(case E of M end, Map) => case subst(E, Map) of substMatch(M, Map) end
   rule subst(if IfBody end, Map) => if substIfBody(IfBody, Map) end
   rule subst(begin Es end, Map) => begin substAll(Es, Map) end
@@ -54,9 +54,9 @@ module ERL-SUBSTITUTION
   rule subst([E || GFs], Map) => [subst(E, removeAll(Map, varsBoundedByGen(GFs))) || substGFs(GFs, Map)]
 
   syntax Set ::= varsBoundedByGen(GFs) [function]
-  rule varsBoundedByGen((P:Exp <- L, GFs:GFs)) => fv(P) varsBoundedByGen(GFs)
+  rule varsBoundedByGen((P:Exp <- _, GFs:GFs)) => fv(P) varsBoundedByGen(GFs)
   rule varsBoundedByGen((.GFs)) => (.Set)
-  rule varsBoundedByGen((B, GFs:GFs)) => varsBoundedByGen(GFs) [owise]
+  rule varsBoundedByGen((_, GFs:GFs)) => varsBoundedByGen(GFs) [owise]
 
   // shadowing!
   syntax GFs ::= substGFs(GFs, Map) [function]

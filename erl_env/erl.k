@@ -5,6 +5,8 @@
 \organization{University of Kent, Eotvos Lorand University}
 */
 
+//Compile: Use Java backend
+
 //@ \section{Semantics}
 requires "erl-syntax.k"
 requires "erl-configuration.k"
@@ -53,9 +55,9 @@ module ERL
 
   rule I1 *   I2 => I1 *Int I2
   rule I1 div I2 => I1 /Int I2 requires I2 =/=Int 0
-  rule I1 div I2 => %badarith requires I2 ==Int 0
+  rule _ div I2 => %badarith requires I2 ==Int 0
   rule I1 rem I2 => I1 %Int I2 requires I2 =/=Int 0
-  rule I1 rem I2 => %badarith requires I2 ==Int 0
+  rule _ rem I2 => %badarith requires I2 ==Int 0
   rule I1 +   I2 => I1 +Int I2
   rule I1 -   I2 => I1 -Int I2
 
@@ -66,46 +68,41 @@ module ERL
 
   rule (E1:Int)    < (E2:Int)     => (E1 <Int E2)
 
-  // converting Bool to String
-  rule #tokenToString(true) => "true"   [anywhere]
-  rule #tokenToString(false) => "false" [anywhere]
+  syntax String ::= #tokenToString(Exp)  [function, functional, hook(STRING.token2string)]
 
   rule (E1:Atom)   < (E2:Atom)    => #tokenToString(E1) <String #tokenToString(E2)
 
-  rule (E1:Int)  < (E2:Atom)    => true
-  rule (E1:Int)  < ({Es:Exps})  => true
-  rule (E1:Int)  < [_]          => true
-  rule (E1:Int)  < [_ | _]      => true
-  rule (E1:Atom) < (E2:Int)     => false
-  rule (E1:Atom) < {Vs}         => true
-  rule (E1:Atom) < [_]          => true
-  rule (E1:Atom) < [_ | _]      => true
-  rule {Vs}      < (E2:Atom)    => false
-  rule {Vs}      < (E2:Int)     => false
-  rule [_]       < (E2:Atom)    => false
-  rule [_|_]     < (E2:Atom)    => false
-  rule [_]       < (E2:Int)     => false
-  rule [_|_]     < (E2:Int)     => false
-  rule {Vs}      < [_]          => true
-  rule {Vs}      < [_|_]        => true
-  rule [_]       < {Vs}         => false
-  rule [_|_]     < {Vs}         => false
+  rule (_:Int)  < (_:Atom)     :Value => true
+  rule (_:Int)  < ({_:Values}) :Value => true
+  rule (_:Int)  < [_]          :Value => true
+  rule (_:Int)  < [_ | _]      :Value => true
+  rule (_:Atom) < (_:Int)      :Value => false
+  rule (_:Atom) < {_}          :Value => true
+  rule (_:Atom) < [_]          :Value => true
+  rule (_:Atom) < [_ | _]      :Value => true
+  rule {_}       :Value < (_:Atom)    :Value => false
+  rule {_}       :Value < (_:Int)     :Value => false
+  rule [_]       :Value < (_:Atom)    :Value => false
+  rule [_|_]     :Value < (_:Atom)    :Value => false
+  rule [_]       :Value < (_:Int)     :Value => false
+  rule [_|_]     :Value < (_:Int)     :Value => false
+  rule {_}       :Value < [_]         :Value => true
+  rule {_}       :Value < [_|_]       :Value => true
+  rule [_]       :Value < {_}         :Value => false
+  rule [_|_]     :Value < {_}         :Value => false
 
-  rule {(.Values)}   < {(.Values)}       => false
-  rule {(X:Value,Xs:Values)}  < {(Y:Value,Ys:Values)} => X < Y
-       requires %count(Xs) ==Int 0 andBool %count(Ys) ==Int 0
+  rule {(.Values)}:Value   < {(.Values)}:Value       => false
+  rule {(X:Value,Xs:Values)}:Value  < {(Y:Value,Ys:Values)}:Value => X < Y
+       requires %count({Xs}:>Exps) ==Int 0 andBool %count({Ys}:>Exps) ==Int 0
        [structural]
-  rule {(X:Value,Xs:Values)} < {(Y:Value,Ys:Values)} => (X < Y) orelse (X == Y andalso {Xs} < {Ys})
-       requires %count(Xs) ==Int %count(Ys) andBool %count(Xs) >Int 0 andBool %count(Ys) >Int 0
-       [structural]
-  rule {(Xs:Values)} < {(Ys:Values)} => %count(Xs) <Int %count(Ys)
-       requires %count(Xs) =/=Int %count(Ys)
-
-  rule [.Exps]    < [V | Vs] => true
-  rule [.Exps]    < [.Exps]  => false
-  rule [V | Vs]   < [.Exps]  => false
-  rule [V1 | Vs1] < [V2 | Vs2] => Vs1 < Vs2 requires eq(V1,V2) [structural]
-  rule [V1 | Vs1] < [V2 | Vs2] => V1 < V2   requires notBool (eq(V1,V2)) [structural]
+  rule {(X:Value,Xs:Values)}:Value < {(Y:Value,Ys:Values)}:Value => (X < Y) orelse (X == Y andalso {Xs:Values}:Value < {Ys:Values}:Value)
+  
+  
+  rule ([.Values]):Value  < ([_|_]) :Value       => true
+  rule ([.Values]):Value  < ([.Values]):Value    => false
+  rule [_|_] :Value     < [.Values]:Value    => false
+  rule [V1 | Vs1] :Value < [V2 | Vs2] :Value => Vs1 < Vs2 requires eq(V1,V2) [structural]
+  rule [V1 | _]   :Value < [V2 | _]   :Value => V1  < V2  requires notBool (eq(V1,V2)) [structural]
 
   rule (E1:Value) >= (E2:Value) => not (E1 < E2) [structural]
   rule (E1:Value) >  (E2:Value) => (E2 < E1)     [structural]
@@ -162,21 +159,23 @@ module ERL
 // -----------------------------------------------------------------------------
 // List operations
 
-  rule [E1 | E1s] ++ E2 => [E1 | E1s ++ E2]
-  rule [.Values] ++ E2 => E2
+  rule ([E1 | E1s]:Value) ++ E2 => [E1 | E1s ++ E2]
+  rule ([.Values]:Value) ++ E2 => E2
   // NOTE: _:Value restriction is needed to aviod wrong rewriting
-  rule <k> _:Value ++ _ => %badarg ... </k> [owise]
+  //TODO
+  //rule <k> _:Value ++ _ => %badarg ... </k> [owise]
 
-  rule [.Values] -- [.Values] => [.Values]
-  rule [.Values] -- [_:Values | _:Value] => [.Values]
-  rule [E1 | E1s] -- [E2 | Es2] => %removeElement(E2, [E1 | E1s]) -- Es2
-  rule [E1 | E1s] -- [.Values] => [E1 | E1s]
-  rule _:Value -- _:Value => %badarg  [owise]
+  rule ([.Values]:Value) -- [.Values]:Value => [.Values]:Value
+  rule ([.Values]:Value) -- [_:Values | _:Value]:Value => [.Values]:Value
+  rule ([E1 | E1s]:Value) -- [E2 | Es2] :Value => %removeElement(E2, [E1 | E1s]:Value) -- Es2
+  rule ([E1 | E1s]:Value) -- [.Values]:Value => [E1 | E1s] :Value
+  //TODO
+  //rule _:Value -- _:Value => %badarg  [owise]
 
   syntax Exp ::= "%removeElement(" Exp "," Exp ")"   [strict]
   rule %removeElement(E, [E1 | E1s]) => E1s requires eq(E,E1)
   rule %removeElement(E, [E1 | E1s]) => [E1 | %removeElement(E, E1s)] requires notBool (eq(E,E1))
-  rule %removeElement(E, [.Exps]) => [.Exps]
+  rule %removeElement(_, [.Exps]) => [.Exps]
 
 // -----------------------------------------------------------------------------
 // List comprehension
@@ -197,18 +196,18 @@ module ERL
   // Another version (idea: https://www.haskell.org/onlinereport/exps.html#list-comprehensions)
 
   rule [ E || P <- L, GFs] =>
-       %concatMap(fun (P) -> [E || GFs]; (?X:Joker) -> [(.Exps)] end, L)
-       [structural]
+      %concatMap(fun (P) -> [E || GFs]; (?_:Joker) -> [(.Exps)] end, L)
+      [structural]
 
   rule [ E || Bool, GFs] =>
       case Bool of
         true -> [E || GFs];
-        (?X:Joker) -> [(.Exps)]
+        (?_:Joker) -> [(.Exps)]
       end
       requires notBool (isGenerator(Bool))
 
   syntax Exp ::= "%concatMap(" Exp "," Exp ")"  [strict(2)]
-  rule %concatMap(F, [(.Exps)]) => [(.Exps)]
+  rule %concatMap(_, [(.Exps)]) => [(.Exps)]
   rule %concatMap(F, [X | Xs])  => F(X) ++ %concatMap(F, Xs)
 
 
@@ -217,15 +216,15 @@ module ERL
 
 // FA call (local)
 
-  rule <k>F:Atom(A:Values) =>
-          matchesAndRestore({A}, getMatch(L), Env) ...</k>
+  rule <k>F:Atom(Args:Values) => 
+          matchesAndRestore({Args}, getMatch(L), Env) ...</k>
        <env> Env => .Map </env>
        <currentMod> CurrentMod </currentMod>
        <mods> ...
          <mod>
            ...
            <modname> CurrentMod </modname>
-           <fundefs>...  {F, %count(A)} |-> L:List ...</fundefs>
+           <fundefs>...  {F, %count(Args)}:Value |-> L ...</fundefs>
            ...
          </mod> ...
        </mods>
@@ -233,8 +232,8 @@ module ERL
 
 // FA call (imported)
 
-  rule <k>F:Atom(A:Values) =>
-          matchesAndRestore({A}, getMatch(L), Env) ~> restoreCurrentMod(CurrentMod) ...
+  rule <k> F:Atom(Args:Values) =>
+          matchesAndRestore({Args}, getMatch(L), Env) ~> restoreCurrentMod(CurrentMod) ...
        </k>
        <env> Env => .Map </env>
        <currentMod> CurrentMod => M </currentMod>
@@ -242,31 +241,30 @@ module ERL
          <mod>
            ... 
            <modname> CurrentMod </modname>
-           <imports> (S1:Set) SetItem({M, F, %count(A)}) </imports>
+           <imports> (_:Set) SetItem({M, F, %count({Args}:>Values)}:Value) </imports>
            ...
          </mod>
          <mod>
            ... 
            <modname> M </modname>
-           <exports> (S2:Set) SetItem({F, %count(A)}) </exports>
-           <fundefs>... {F, %count(A)} |-> L:List ...</fundefs>
+           <exports> (_:Set) SetItem({F, %count(Args)}:Value) </exports>
+           <fundefs>... {F, %count(Args)}:Value |-> L:List ...</fundefs>
            ...
          </mod> ...
        </mods>
       
-// MFA call
+// // MFA call
 
-  rule <k>(M:Atom):(F:Atom)(A:Values) =>
-         matchesAndRestore({A}, getMatch(L), Env) ~> restoreCurrentMod(CurrentMod) ...
+  rule <k>(M:Atom):(F:Atom)(Args:Values) =>
+         matchesAndRestore({Args}, getMatch(L), Env) ~> restoreCurrentMod(CurrentMod) ...
        </k>
        <env> Env => .Map </env>
        <currentMod> CurrentMod => M </currentMod>
        <mods> ...
          <mod>
            ... 
-           <modname> Mod </modname>
-           <exports> (S:Set) SetItem({F, %count(A)}) </exports>
-           <fundefs>...  {F, %count(A)} |-> L:List ...</fundefs>
+           <exports> (_:Set) SetItem({F, %count(Args)}:Value) </exports>
+           <fundefs>...  {F, %count(Args)}:Value |-> L:List ...</fundefs>
            ...
          </mod> ...
        </mods>
@@ -278,7 +276,6 @@ module ERL
        requires (notBool (isNamedFun(fun Cls:Clauses end))) andBool (%count(Args) ==Int %clauseVars(Cls))
   
   rule <k>(fun Cls:Clauses end)(Args) => %badarity ...</k>
-      <env> Env </env>
       requires (notBool (isNamedFun(fun Cls:Clauses end))) andBool (notBool %count(Args) ==Int %clauseVars(Cls))
 
 // Call to an anonymous function with a variable as "name"
@@ -302,34 +299,34 @@ module ERL
        fun(genArgs(Arity)) -> Name(genArgs(Arity)) end(Args) [structural]
 
 // Call exceptions
-  rule <k>F:Atom(A:Values) => %badarity ...</k>
-       <env> Env => .Map </env>
-       <currentMod> CurrentMod </currentMod>
-       <funnames> (S:Set) SetItem(F) </funnames>
-       <mods> ...
-         <mod>
-           ...
-           <modname> CurrentMod </modname>
-           ...
-         </mod> ...
-       </mods>
-      requires notBool isBIF(F)   [owise]
+  // rule <k>F:Atom(_:Values) => %badarity ...</k>
+  //      <env> _ => .Map </env>
+  //      <currentMod> CurrentMod </currentMod>
+  //      <funnames> (_:Set) SetItem(F) </funnames>
+  //      <mods> ...
+  //        <mod>
+  //          ...
+  //          <modname> CurrentMod </modname>
+  //          ...
+  //        </mod> ...
+  //      </mods>
+  //     requires notBool isBIF(F)   [owise]
 
-  rule <k>F:Value(A:Values) => %badfun ...</k>
-       <env> Env => .Map </env>
-       <currentMod> CurrentMod </currentMod>
+  // rule <k>F:Value(_:Values) => %badfun ...</k>
+  //      <env> _ => .Map </env>
+  //      <currentMod> CurrentMod </currentMod>
        
-       <mods> ...
-         <mod>
-           ...
-           <modname> CurrentMod </modname>
-           ...
-         </mod> ...
-       </mods>
-      requires notBool isAtom(F)  [owise]
+  //      <mods> ...
+  //        <mod>
+  //          ...
+  //          <modname> CurrentMod </modname>
+  //          ...
+  //        </mod> ...
+  //      </mods>
+  //     requires notBool isAtom(F)  [owise]
 
-  rule <k> F:Atom(Vs:Values) => %undef ... </k> 
-    requires (notBool isBIF(F)) [owise]
+  // rule <k> F:Atom(_:Values) => %undef ... </k> 
+  //   requires (notBool isBIF(F)) [owise]
 
 // -----------------------------------------------------------------------------
 // If expression
@@ -351,19 +348,19 @@ module ERL
 
   //So far, we are only able to write expression sequence in a begin-end block
 
-  rule begin E, Es end => E
-      requires Es ==K .Exps
+  rule begin E, .Exps end => E
+  rule begin E, .Values end => E
+
+  rule begin E , Es end => (case E of (?_:Joker) -> begin Es end end)
+      requires notBool (isMatchExp(E)) andBool (Es =/=K .Exps) andBool (Es =/=K .Values)
 
   rule begin P = E, Es end => case E of P -> begin Es end end
-      requires Es =/=K .Exps
-
-  rule begin E , Es end => (case E of (?X:Joker) -> begin Es end end)
-      requires notBool (isMatchExp(E)) andBool (Es =/=K .Exps)
+      requires (Es =/=K .Exps) andBool (Es =/=K .Values)
 
 // -----------------------------------------------------------------------------
 // Match expression
 
-  rule P = E => E
+  rule _ = E => E
 
 // =============================================================================
 // Local helper functions
@@ -380,7 +377,7 @@ module ERL
   rule getMatchFromFun((Es) -> E) => {Es} -> E
   rule getMatchFromFun((Es) -> E; Cls:Clauses) => {Es} -> E ;  getMatchFromFun(Cls)
       requires Cls =/=K .Clauses
-  rule getMatchFromFun(Var:Variable (Es) -> E) => {Es} -> E
+  rule getMatchFromFun(_:Variable   (Es) -> E) => {Es} -> E
   rule getMatchFromFun(Var:Variable (Es) -> E; Cls:Clauses) => {Es} -> E ; getMatchFromFunWithVar(Cls, Var)
       requires Cls =/=K .Clauses
 
@@ -390,15 +387,16 @@ module ERL
       requires Cls =/=K .Clauses
   rule getMatchFromFunWithVar(_, _) => head_mismatch [owise]
 
-  syntax Map ::= getNewFunvar(Exp) [function]
+  syntax Map ::= getNewFunvar(Exp) [function] 
   rule getNewFunvar(fun Var (Es) -> E end) => Var |-> (fun Var (Es) -> E end)
   rule getNewFunvar(fun Var (Es) -> E; Cls:Clauses end) => Var |->  (fun Var (Es) -> E; Cls:Clauses end)
-  rule getNewFunvar(_) => .Map [owise]
+  rule getNewFunvar(fun (_) -> _ end) => .Map [owise]
 
   syntax Variable ::= getFunvar(Exp) [function]
-  rule getFunvar(fun Var (Es) -> E end) => Var
-  rule getFunvar(fun Var (Es) -> E; Cls:Clauses end) => Var
-  rule getFunvar(_) => . [owise]
+  rule getFunvar(fun Var (_) -> _ end) => Var
+  rule getFunvar(fun Var (_) -> _; _:Clauses end) => Var
+  //TODO
+  //rule getFunvar(_) => . [owise]
 
   syntax Bool ::= isNamedFun(Exp) [function]
   rule isNamedFun(Fun) => getNewFunvar(Fun) =/=K .Map
@@ -406,11 +404,11 @@ module ERL
   // Need for restrore module environment after an MFA call
   syntax Exp ::= "restoreCurrentMod" "(" Atom ")"
   rule <k> Val:KResult ~> restoreCurrentMod(Mod) => Val ...</k>
-       <currentMod> CorrentMod => Mod </currentMod>
+       <currentMod> _ => Mod </currentMod>
 
   syntax Exps ::= genArgs(Int) [function]
   rule genArgs(0) => .Exps
-  rule genArgs(N) => (#parseToken("Variable", "Arg" +String Int2String(N))), genArgs(N -Int 1)
+  rule genArgs(N) => (String2Variable("Arg" +String Int2String(N))), genArgs(N -Int 1)
       requires N >Int 0
 
   syntax Int ::= "%clauseVars(" Clauses ")"  [function]

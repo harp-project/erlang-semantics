@@ -1,4 +1,4 @@
-f(X) -> X * 2.
+f(X) -> X * 2 .
 
 main() ->
   begin 
@@ -6,4 +6,4 @@ main() ->
               ({X,Y}) -> X + Y
           end,
     Fun({1,1}) + Fun({1,2})
-  end == 6.
+  end == 6 .

@@ -9,4 +9,4 @@ main() ->
             F(Y - Foo) * Foo * FunG(2)
           end
     end(3)
-  end == 1.
+  end == 1 .

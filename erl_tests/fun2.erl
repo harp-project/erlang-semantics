@@ -1,4 +1,4 @@
-f(X) -> X * 2.
+f(X) -> X * 2 .
 
 main() ->
   begin
@@ -7,4 +7,4 @@ main() ->
               ({X,Y}) -> begin Z2 = Z, fun(X,Y) -> X + Y + Z2 end(X,Y) end 
           end,
     Fun({1,1}) + Fun({1,f(1)})
-  end == 8.
+  end == 8 .
