@@ -6,4 +6,4 @@ main() ->
     A = 1 * 2 + 1,
     Fun = fun F/A,
     Fun(1,2,3)
-  end == 6.
+  end == 6 .

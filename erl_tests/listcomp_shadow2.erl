@@ -1,4 +1,4 @@
-f(X) -> X + 1.
+f(X) -> X + 1 .
 
 main() ->
   begin
