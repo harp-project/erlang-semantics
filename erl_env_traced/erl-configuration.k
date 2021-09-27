@@ -19,10 +19,13 @@ module ERL-CONFIGURATION
                   <trace color="blue"> 
 
                     // BIFs TODO: these have been not generated yet, add them after implementing it
-                    // "is_atom" |-> 0
-                    // "is_boolean" |-> 0
-                    // "is_integer" |-> 0
-                    // "is_number" |-> 0
+                    "is_atom" |-> 0
+                    "is_boolean" |-> 0
+                    "is_integer" |-> 0
+                    "is_number" |-> 0
+                    "abs" |-> 0
+                    "abs_ex" |-> 0
+
                     "hd" |-> 0
                     "tl" |-> 0
                     "element" |-> 0
